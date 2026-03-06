@@ -66,6 +66,8 @@ export const AdminDashboard = () => {
   const [userFilter, setUserFilter] = useState("all");
   const [categoryPage, setCategoryPage] = useState(1);
   const CATEGORIES_PER_PAGE = 8;
+  const [userPage, setUserPage] = useState(1);
+  const USERS_PER_PAGE = 10;
   const [profilePicturePreview, setProfilePicturePreview] = useState(
     user?.profilePicture || null,
   );
@@ -590,7 +592,10 @@ export const AdminDashboard = () => {
                       (filter) => (
                         <button
                           key={filter}
-                          onClick={() => setUserFilter(filter)}
+                          onClick={() => {
+                            setUserFilter(filter);
+                            setUserPage(1);
+                          }}
                           className={`px-3 py-1.5 rounded-full text-sm transition-colors capitalize ${
                             userFilter === filter
                               ? "bg-blue-600 text-white"
@@ -612,83 +617,143 @@ export const AdminDashboard = () => {
                     <p className="text-gray-600 text-lg">No users found</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    {filteredUsers.map((u) => (
-                      <div
-                        key={u._id}
-                        className="bg-white border rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                            <Users className="w-5 h-5 text-gray-500" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-gray-900">
-                              {u.name}
-                            </h3>
-                            <p className="text-sm text-gray-600">{u.email}</p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span
-                                className={`text-xs px-2 py-0.5 rounded-full capitalize ${
-                                  u.role === "provider"
-                                    ? "bg-blue-100 text-blue-700"
-                                    : u.role === "admin"
-                                      ? "bg-purple-100 text-purple-700"
-                                      : "bg-gray-100 text-gray-700"
-                                }`}
-                              >
-                                {u.role}
-                              </span>
-                              {u.role === "provider" && (
-                                <span
-                                  className={`text-xs px-2 py-0.5 rounded-full ${
-                                    u.isApproved
-                                      ? "bg-green-100 text-green-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                  }`}
-                                >
-                                  {u.isApproved ? "Approved" : "Pending"}
-                                </span>
-                              )}
-                              <span className="text-xs text-gray-400">
-                                Joined{" "}
-                                {new Date(u.createdAt).toLocaleDateString()}
-                              </span>
+                  <>
+                    <div className="space-y-3">
+                      {filteredUsers
+                        .slice(
+                          (userPage - 1) * USERS_PER_PAGE,
+                          userPage * USERS_PER_PAGE,
+                        )
+                        .map((u) => (
+                          <div
+                            key={u._id}
+                            className="bg-white border rounded-xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                <Users className="w-5 h-5 text-gray-500" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-gray-900">
+                                  {u.name}
+                                </h3>
+                                <p className="text-sm text-gray-600">
+                                  {u.email}
+                                </p>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span
+                                    className={`text-xs px-2 py-0.5 rounded-full capitalize ${
+                                      u.role === "provider"
+                                        ? "bg-blue-100 text-blue-700"
+                                        : u.role === "admin"
+                                          ? "bg-purple-100 text-purple-700"
+                                          : "bg-gray-100 text-gray-700"
+                                    }`}
+                                  >
+                                    {u.role}
+                                  </span>
+                                  {u.role === "provider" && (
+                                    <span
+                                      className={`text-xs px-2 py-0.5 rounded-full ${
+                                        u.isApproved
+                                          ? "bg-green-100 text-green-700"
+                                          : "bg-yellow-100 text-yellow-700"
+                                      }`}
+                                    >
+                                      {u.isApproved ? "Approved" : "Pending"}
+                                    </span>
+                                  )}
+                                  <span className="text-xs text-gray-400">
+                                    Joined{" "}
+                                    {new Date(u.createdAt).toLocaleDateString()}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                        {u.role === "provider" && (
-                          <div className="flex gap-2">
-                            {!u.isApproved && (
-                              <button
-                                onClick={() => {
-                                  console.log("User being approved:", u);
-                                  console.log(
-                                    "User ID field value:",
-                                    u._id || u.id,
-                                  );
-                                  handleApproveProvider(u._id || u.id);
-                                }}
-                                className="flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
-                              >
-                                <CheckCircle className="w-4 h-4" />
-                                Approve
-                              </button>
+                            {u.role === "provider" && (
+                              <div className="flex gap-2">
+                                {!u.isApproved && (
+                                  <button
+                                    onClick={() => {
+                                      console.log("User being approved:", u);
+                                      console.log(
+                                        "User ID field value:",
+                                        u._id || u.id,
+                                      );
+                                      handleApproveProvider(u._id || u.id);
+                                    }}
+                                    className="flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                                  >
+                                    <CheckCircle className="w-4 h-4" />
+                                    Approve
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() =>
+                                    handleRejectProvider(u._id || u.id)
+                                  }
+                                  className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
+                                >
+                                  <XCircle className="w-4 h-4" />
+                                  Reject
+                                </button>
+                              </div>
                             )}
-                            <button
-                              onClick={() =>
-                                handleRejectProvider(u._id || u.id)
-                              }
-                              className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
-                            >
-                              <XCircle className="w-4 h-4" />
-                              Reject
-                            </button>
                           </div>
-                        )}
+                        ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {Math.ceil(filteredUsers.length / USERS_PER_PAGE) > 1 && (
+                      <div className="flex items-center justify-center gap-4 mt-8">
+                        <button
+                          onClick={() => setUserPage((p) => Math.max(1, p - 1))}
+                          disabled={userPage === 1}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Previous
+                        </button>
+                        <div className="flex items-center gap-2">
+                          {Array.from({
+                            length: Math.ceil(
+                              filteredUsers.length / USERS_PER_PAGE,
+                            ),
+                          }).map((_, i) => (
+                            <button
+                              key={i + 1}
+                              onClick={() => setUserPage(i + 1)}
+                              className={`w-10 h-10 rounded-lg transition-colors text-sm font-medium ${
+                                userPage === i + 1
+                                  ? "bg-blue-600 text-white"
+                                  : "border border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              {i + 1}
+                            </button>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() =>
+                            setUserPage((p) =>
+                              Math.min(
+                                Math.ceil(
+                                  filteredUsers.length / USERS_PER_PAGE,
+                                ),
+                                p + 1,
+                              ),
+                            )
+                          }
+                          disabled={
+                            userPage ===
+                            Math.ceil(filteredUsers.length / USERS_PER_PAGE)
+                          }
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Next
+                        </button>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
