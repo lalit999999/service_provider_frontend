@@ -17,8 +17,14 @@ export const authAPI = {
   uploadProfileImage: (file, userId) => {
     const formData = new FormData();
     formData.append('image', file);
-    const endpoint = userId ? `/auth/${userId}/profile-image` : '/auth/profile-image';
-    return axiosInstance.post(endpoint, formData, {
+    if (userId) {
+      return axiosInstance.put(`/auth/${userId}/profile-image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    }
+    return axiosInstance.post('/auth/profile-image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
