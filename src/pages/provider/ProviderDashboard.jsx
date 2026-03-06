@@ -226,8 +226,13 @@ export const ProviderDashboard = () => {
     setEditingService(service);
     setValue("title", service.title);
     setValue("description", service.description);
-    setValue("category", service.category._id || service.category);
-    setValue("price", service.price);
+    // Handle both category object and categoryId string
+    const categoryId =
+      service.category?._id || service.categoryId || service.category;
+    setValue("category", categoryId);
+    // Handle both price and basePrice field names
+    const price = service.price || service.basePrice;
+    setValue("price", price);
     setValue("city", service.city);
     setShowServiceModal(true);
   };
@@ -497,7 +502,7 @@ export const ProviderDashboard = () => {
                         </p>
                         <div className="flex items-center justify-between mb-3 text-sm">
                           <span className="text-blue-600 font-semibold text-lg">
-                            ${service.price}/hr
+                            ${service.price || service.basePrice}/hr
                           </span>
                           <div className="flex items-center gap-1 text-gray-500">
                             <MapPin className="w-3.5 h-3.5" />
