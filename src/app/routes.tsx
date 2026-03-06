@@ -22,6 +22,16 @@ const Home = lazy(() =>
 const Login = lazy(() =>
   import("../pages/public/Login").then((m) => ({ default: m.Login })),
 );
+const ForgotPassword = lazy(() =>
+  import("../pages/public/ForgotPassword").then((m) => ({
+    default: m.ForgotPassword,
+  })),
+);
+const ResetPassword = lazy(() =>
+  import("../pages/public/ResetPassword").then((m) => ({
+    default: m.ResetPassword,
+  })),
+);
 const Register = lazy(() =>
   import("../pages/public/Register").then((m) => ({ default: m.Register })),
 );
@@ -88,6 +98,22 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrap>
             <Register />
+          </SuspenseWrap>
+        ),
+      },
+      {
+        path: "/forgot-password",
+        element: (
+          <SuspenseWrap>
+            <ForgotPassword />
+          </SuspenseWrap>
+        ),
+      },
+      {
+        path: "/reset-password",
+        element: (
+          <SuspenseWrap>
+            <ResetPassword />
           </SuspenseWrap>
         ),
       },

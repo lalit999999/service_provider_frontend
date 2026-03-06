@@ -11,6 +11,9 @@ export const authAPI = {
   login: (data) => axiosInstance.post('/auth/login', data),
   updateProfile: (data) => axiosInstance.put('/auth/profileupdate', data),
   updateAvailability: (isAvailable) => axiosInstance.patch('/auth/availability', { isAvailable }),
+  forgotPassword: (email) => axiosInstance.post('/auth/forgot-password', { email }),
+  resetPassword: (email, resetToken, newPassword) =>
+    axiosInstance.post('/auth/reset-password', { email, resetToken, newPassword }),
   uploadProfileImage: (file, userId) => {
     const formData = new FormData();
     formData.append('image', file);

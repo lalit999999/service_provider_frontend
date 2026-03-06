@@ -10,6 +10,7 @@ import { LogIn, Mail, Lock, User } from "lucide-react";
 
 export const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -24,6 +25,7 @@ export const Login = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
+    setAuthError("");
     try {
       const response = await authAPI.login(data);
       const { token, user } = response.data;
@@ -40,10 +42,11 @@ export const Login = () => {
 
       navigate(redirectPath);
     } catch (error) {
-      toast.error(
+      const errorMessage =
         error.response?.data?.message ||
-          "Login failed. Please check your credentials.",
-      );
+        "Login failed. Please check your credentials.";
+      setAuthError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -73,6 +76,11 @@ export const Login = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-lg rounded-xl sm:px-10">
+          {authError && (
+            <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-700 font-medium">{authError}</p>
+            </div>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
               <label
@@ -124,6 +132,12 @@ export const Login = () => {
                   {errors.password.message}
                 </p>
               )}
+              <Link
+                to="/forgot-password"
+                className="mt-2 inline-block text-sm text-blue-600 hover:text-blue-500 font-medium"
+              >
+                Forgot password?
+              </Link>
             </div>
 
             <div>

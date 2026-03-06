@@ -46,7 +46,11 @@ export const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center gap-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Wrench className="w-5 h-5 text-white" />
+                <img
+                  src="https://res.cloudinary.com/dsmyka9cr/image/upload/v1772833875/Screenshot_2026-03-02_22_56_10_jszwmm.png"
+                  alt="logo"
+                  srcset=""
+                />
               </div>
               <span className="text-xl font-bold text-gray-900">
                 Local<span className="text-blue-600">Services</span>
@@ -189,10 +193,11 @@ export const Navbar = () => {
                   Dashboard
                 </Link>
                 <div className="px-3 py-2.5 text-gray-600 text-sm flex items-center gap-2">
-                  <User className="w-4 h-4" />
+                  <img src={user?.profileImage} alt="" srcset="" />
                   {user?.name}
                   <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full capitalize">
                     {user?.role}
+                    {/* profileImage */}
                   </span>
                 </div>
                 <button

@@ -82,7 +82,7 @@ export const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm">
                 <Mail className="w-4 h-4 text-blue-400" />
-                support@localservices.com
+                kalpeshgujar70@gmail.com
               </li>
               <li className="flex items-center gap-2 text-sm">
                 <Phone className="w-4 h-4 text-blue-400" />
@@ -90,7 +90,7 @@ export const Footer = () => {
               </li>
               <li className="flex items-center gap-2 text-sm">
                 <MapPin className="w-4 h-4 text-blue-400" />
-                New York, NY 10001
+               Nit patna ,Bihta campus
               </li>
             </ul>
           </div>
