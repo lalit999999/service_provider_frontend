@@ -52,6 +52,11 @@ const AdminDashboard = lazy(() =>
     default: m.AdminDashboard,
   })),
 );
+const ServerHealth = lazy(() =>
+  import("../pages/admin/ServerHealth").then((m) => ({
+    default: m.ServerHealth || m.default,
+  })),
+);
 
 // Helper to wrap lazy components in Suspense
 const SuspenseWrap = ({ children }: { children: React.ReactNode }) => (
@@ -141,6 +146,18 @@ export const router = createBrowserRouter([
             <ProtectedRoute>
               <RoleRoute allowedRoles={["admin"]}>
                 <AdminDashboard />
+              </RoleRoute>
+            </ProtectedRoute>
+          </SuspenseWrap>
+        ),
+      },
+      {
+        path: "/admin/server-health",
+        element: (
+          <SuspenseWrap>
+            <ProtectedRoute>
+              <RoleRoute allowedRoles={["admin"]}>
+                <ServerHealth />
               </RoleRoute>
             </ProtectedRoute>
           </SuspenseWrap>
