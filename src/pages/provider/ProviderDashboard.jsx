@@ -168,8 +168,18 @@ export const ProviderDashboard = () => {
 
   const onSubmitService = async (data) => {
     try {
+      // Transform frontend field names to backend field names
+      const serviceData = {
+        title: data.title,
+        description: data.description,
+        categoryId: data.category, // Transform 'category' to 'categoryId'
+        basePrice: data.price,     // Transform 'price' to 'basePrice'
+        ...(data.city && { city: data.city }),
+        ...(data.image && { image: data.image }),
+      };
+
       if (editingService) {
-        await servicesAPI.update(editingService._id, data);
+        await servicesAPI.update(editingService._id, serviceData);
         toast.success("Service updated successfully!");
         setServices((prev) =>
           prev.map((s) =>
@@ -177,41 +187,17 @@ export const ProviderDashboard = () => {
           ),
         );
       } else {
-        await servicesAPI.create(data);
+        await servicesAPI.create(serviceData);
         toast.success("Service created successfully!");
-        const newService = {
-          _id: Date.now().toString(),
-          ...data,
-          category: categories.find((c) => c._id === data.category) || {
-            name: "Other",
-          },
-          averageRating: 0,
-          reviewCount: 0,
-        };
-        setServices((prev) => [...prev, newService]);
+        fetchServices(); // Refresh services to get the saved data from backend
       }
       setShowServiceModal(false);
       setEditingService(null);
       reset();
     } catch (error) {
       toast.error(
-        error.response?.data?.message || "Service saved successfully!",
+        error.response?.data?.message || "Failed to save service",
       );
-      setShowServiceModal(false);
-      setEditingService(null);
-      reset();
-      if (!editingService) {
-        const newService = {
-          _id: Date.now().toString(),
-          ...data,
-          category: categories.find((c) => c._id === data.category) || {
-            name: "Other",
-          },
-          averageRating: 0,
-          reviewCount: 0,
-        };
-        setServices((prev) => [...prev, newService]);
-      }
     }
   };
 
