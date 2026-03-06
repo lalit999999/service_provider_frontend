@@ -147,29 +147,23 @@ export const CustomerDashboard = () => {
       return;
     }
     try {
+      const dateTimeValue = new Date(rescheduleDate).toISOString();
       await bookingsAPI.reschedule(selectedBooking._id, {
-        scheduledDate: rescheduleDate,
+        dateTime: dateTimeValue,
       });
       toast.success("Booking rescheduled successfully!");
       setShowRescheduleModal(false);
       setBookings((prev) =>
         prev.map((b) =>
-          b._id === selectedBooking._id
-            ? { ...b, scheduledDate: rescheduleDate }
-            : b,
+          b._id === selectedBooking._id ? { ...b, dateTime: dateTimeValue } : b,
         ),
       );
     } catch (error) {
       console.error("Error rescheduling:", error);
-      toast.error("Rescheduling successful!");
-      setShowRescheduleModal(false);
-      setBookings((prev) =>
-        prev.map((b) =>
-          b._id === selectedBooking._id
-            ? { ...b, scheduledDate: rescheduleDate }
-            : b,
-        ),
+      toast.error(
+        error.response?.data?.message || "Failed to reschedule booking",
       );
+      setShowRescheduleModal(false);
     }
   };
 

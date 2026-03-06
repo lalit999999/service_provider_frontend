@@ -147,7 +147,7 @@ export const ProviderDashboard = () => {
           _id: "b2",
           service: { title: "Emergency Pipe Repair", _id: "2", price: 80 },
           customer: { name: "Bob Smith", _id: "c2" },
-          status: "Confirmed",
+          status: "Accepted",
           scheduledDate: new Date(Date.now() + 86400000).toISOString(),
           address: "456 Oak Ave, Brooklyn, NY",
           totalPrice: 80,
@@ -157,7 +157,7 @@ export const ProviderDashboard = () => {
           _id: "b3",
           service: { title: "Professional Plumbing", _id: "1", price: 50 },
           customer: { name: "Carol Davis", _id: "c3" },
-          status: "In-progress",
+          status: "Completed",
           scheduledDate: new Date().toISOString(),
           address: "789 Pine Rd, Queens, NY",
           totalPrice: 50,
@@ -245,7 +245,7 @@ export const ProviderDashboard = () => {
           toast.success("Booking accepted!");
           setBookings((prev) =>
             prev.map((b) =>
-              b._id === bookingId ? { ...b, status: "Confirmed" } : b,
+              b._id === bookingId ? { ...b, status: "Accepted" } : b,
             ),
           );
           break;
@@ -260,14 +260,14 @@ export const ProviderDashboard = () => {
           );
           break;
 
-        case "in-progress":
+        case "completed":
           await bookingsAPI
-            .updateStatus(bookingId, "In-progress")
+            .updateStatus(bookingId, "Completed")
             .catch(() => {});
-          toast.success("Status updated to In-progress");
+          toast.success("Booking marked as completed!");
           setBookings((prev) =>
             prev.map((b) =>
-              b._id === bookingId ? { ...b, status: "In-progress" } : b,
+              b._id === bookingId ? { ...b, status: "Completed" } : b,
             ),
           );
           break;
@@ -544,25 +544,21 @@ export const ProviderDashboard = () => {
               <div>
                 {/* Filter */}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {[
-                    "all",
-                    "Requested",
-                    "Confirmed",
-                    "In-progress",
-                    "Completed",
-                  ].map((status) => (
-                    <button
-                      key={status}
-                      onClick={() => setBookingFilter(status)}
-                      className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                        bookingFilter === status
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      }`}
-                    >
-                      {status === "all" ? "All" : status}
-                    </button>
-                  ))}
+                  {["all", "Requested", "Accepted", "Completed"].map(
+                    (status) => (
+                      <button
+                        key={status}
+                        onClick={() => setBookingFilter(status)}
+                        className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                          bookingFilter === status
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        {status === "all" ? "All" : status}
+                      </button>
+                    ),
+                  )}
                 </div>
 
                 {filteredBookings.length === 0 ? (
