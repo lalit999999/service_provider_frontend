@@ -43,6 +43,8 @@ export const ProviderDashboard = () => {
   const [workNotes, setWorkNotes] = useState("");
   const [isAvailable, setIsAvailable] = useState(user?.isAvailable ?? true);
   const [bookingFilter, setBookingFilter] = useState("all");
+  const [servicePage, setServicePage] = useState(1);
+  const SERVICES_PER_PAGE = 6;
   const [profilePicturePreview, setProfilePicturePreview] = useState(
     user?.profileImage?.url || null,
   );
@@ -204,10 +206,12 @@ export const ProviderDashboard = () => {
             s._id === editingService._id ? { ...s, ...data } : s,
           ),
         );
+        setServicePage(1);
       } else {
         await servicesAPI.create(serviceData);
         toast.success("Service created successfully!");
         fetchServices(); // Refresh services to get the saved data from backend
+        setServicePage(1);
       }
       setShowServiceModal(false);
       setEditingService(null);
@@ -226,6 +230,7 @@ export const ProviderDashboard = () => {
       toast.success("Service deleted successfully!");
     }
     setServices((prev) => prev.filter((s) => s._id !== serviceId));
+    setServicePage(1);
   };
 
   const handleEditService = (service) => {
@@ -551,54 +556,112 @@ export const ProviderDashboard = () => {
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {services.map((service) => (
-                      <div
-                        key={service._id}
-                        className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow"
-                      >
-                        <div className="h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mb-4" />
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
-                          {service.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                          {service.description}
-                        </p>
-                        <div className="flex items-center justify-between mb-3 text-sm">
-                          <span className="text-blue-600 font-semibold text-lg">
-                            ${service.price || service.basePrice}/hr
-                          </span>
-                          <div className="flex items-center gap-1 text-gray-500">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {service.city}
-                          </div>
-                        </div>
-                        {service.averageRating > 0 && (
-                          <div className="flex items-center gap-1 text-sm text-gray-500 mb-4">
-                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                            <span>{service.averageRating}</span>
-                            <span>({service.reviewCount} reviews)</span>
-                          </div>
-                        )}
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleEditService(service)}
-                            className="flex-1 flex items-center justify-center gap-1 bg-blue-50 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {services
+                        .slice(
+                          (servicePage - 1) * SERVICES_PER_PAGE,
+                          servicePage * SERVICES_PER_PAGE,
+                        )
+                        .map((service) => (
+                          <div
+                            key={service._id}
+                            className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow"
                           >
-                            <Edit className="w-4 h-4" />
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteService(service._id)}
-                            className="flex-1 flex items-center justify-center gap-1 bg-red-50 text-red-600 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors text-sm"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Delete
-                          </button>
+                            <div className="h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
+                              {service.title}
+                            </h3>
+                            <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                              {service.description}
+                            </p>
+                            <div className="flex items-center justify-between mb-3 text-sm">
+                              <span className="text-blue-600 font-semibold text-lg">
+                                ${service.price || service.basePrice}/hr
+                              </span>
+                              <div className="flex items-center gap-1 text-gray-500">
+                                <MapPin className="w-3.5 h-3.5" />
+                                {service.city}
+                              </div>
+                            </div>
+                            {service.averageRating > 0 && (
+                              <div className="flex items-center gap-1 text-sm text-gray-500 mb-4">
+                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                <span>{service.averageRating}</span>
+                                <span>({service.reviewCount} reviews)</span>
+                              </div>
+                            )}
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleEditService(service)}
+                                className="flex-1 flex items-center justify-center gap-1 bg-blue-50 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                              >
+                                <Edit className="w-4 h-4" />
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteService(service._id)}
+                                className="flex-1 flex items-center justify-center gap-1 bg-red-50 text-red-600 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors text-sm"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+
+                    {/* Pagination */}
+                    {Math.ceil(services.length / SERVICES_PER_PAGE) > 1 && (
+                      <div className="flex items-center justify-center gap-4 mt-8">
+                        <button
+                          onClick={() =>
+                            setServicePage((p) => Math.max(1, p - 1))
+                          }
+                          disabled={servicePage === 1}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Previous
+                        </button>
+                        <div className="flex items-center gap-2">
+                          {Array.from({
+                            length: Math.ceil(
+                              services.length / SERVICES_PER_PAGE,
+                            ),
+                          }).map((_, i) => (
+                            <button
+                              key={i + 1}
+                              onClick={() => setServicePage(i + 1)}
+                              className={`w-10 h-10 rounded-lg transition-colors text-sm font-medium ${
+                                servicePage === i + 1
+                                  ? "bg-blue-600 text-white"
+                                  : "border border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              {i + 1}
+                            </button>
+                          ))}
                         </div>
+                        <button
+                          onClick={() =>
+                            setServicePage((p) =>
+                              Math.min(
+                                Math.ceil(services.length / SERVICES_PER_PAGE),
+                                p + 1,
+                              ),
+                            )
+                          }
+                          disabled={
+                            servicePage ===
+                            Math.ceil(services.length / SERVICES_PER_PAGE)
+                          }
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Next
+                        </button>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
               </div>
             )}

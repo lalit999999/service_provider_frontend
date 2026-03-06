@@ -64,6 +64,8 @@ export const AdminDashboard = () => {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [userFilter, setUserFilter] = useState("all");
+  const [categoryPage, setCategoryPage] = useState(1);
+  const CATEGORIES_PER_PAGE = 8;
   const [profilePicturePreview, setProfilePicturePreview] = useState(
     user?.profilePicture || null,
   );
@@ -290,6 +292,7 @@ export const AdminDashboard = () => {
             c._id === editingCategory._id ? { ...c, ...data } : c,
           ),
         );
+        setCategoryPage(1);
       } else {
         await categoriesAPI.create(data).catch(() => {});
         toast.success("Category created successfully!");
@@ -297,6 +300,7 @@ export const AdminDashboard = () => {
           ...prev,
           { _id: Date.now().toString(), ...data },
         ]);
+        setCategoryPage(1);
       }
       setShowCategoryModal(false);
       setEditingCategory(null);
@@ -312,6 +316,7 @@ export const AdminDashboard = () => {
       await categoriesAPI.delete(categoryId).catch(() => {});
       toast.success("Category deleted successfully!");
       setCategories((prev) => prev.filter((c) => c._id !== categoryId));
+      setCategoryPage(1);
     } catch (error) {
       toast.error("Failed to delete category");
     }
@@ -709,36 +714,90 @@ export const AdminDashboard = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {categories.map((category) => (
-                    <div
-                      key={category._id}
-                      className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow"
-                    >
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {category.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                        {category.description || "No description"}
-                      </p>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEditCategory(category)}
-                          className="flex-1 flex items-center justify-center gap-1 bg-blue-50 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors text-sm"
-                        >
-                          <Edit className="w-4 h-4" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteCategory(category._id)}
-                          className="flex-1 flex items-center justify-center gap-1 bg-red-50 text-red-600 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors text-sm"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
-                        </button>
+                  {categories
+                    .slice(
+                      (categoryPage - 1) * CATEGORIES_PER_PAGE,
+                      categoryPage * CATEGORIES_PER_PAGE,
+                    )
+                    .map((category) => (
+                      <div
+                        key={category._id}
+                        className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow"
+                      >
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                          {category.name}
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                          {category.description || "No description"}
+                        </p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleEditCategory(category)}
+                            className="flex-1 flex items-center justify-center gap-1 bg-blue-50 text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-100 transition-colors text-sm"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCategory(category._id)}
+                            className="flex-1 flex items-center justify-center gap-1 bg-red-50 text-red-600 px-3 py-2 rounded-lg hover:bg-red-100 transition-colors text-sm"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
+
+                {/* Pagination */}
+                {Math.ceil(categories.length / CATEGORIES_PER_PAGE) > 1 && (
+                  <div className="flex items-center justify-center gap-4 mt-8">
+                    <button
+                      onClick={() => setCategoryPage((p) => Math.max(1, p - 1))}
+                      disabled={categoryPage === 1}
+                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Previous
+                    </button>
+                    <div className="flex items-center gap-2">
+                      {Array.from({
+                        length: Math.ceil(
+                          categories.length / CATEGORIES_PER_PAGE,
+                        ),
+                      }).map((_, i) => (
+                        <button
+                          key={i + 1}
+                          onClick={() => setCategoryPage(i + 1)}
+                          className={`w-10 h-10 rounded-lg transition-colors text-sm font-medium ${
+                            categoryPage === i + 1
+                              ? "bg-blue-600 text-white"
+                              : "border border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() =>
+                        setCategoryPage((p) =>
+                          Math.min(
+                            Math.ceil(categories.length / CATEGORIES_PER_PAGE),
+                            p + 1,
+                          ),
+                        )
+                      }
+                      disabled={
+                        categoryPage ===
+                        Math.ceil(categories.length / CATEGORIES_PER_PAGE)
+                      }
+                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
