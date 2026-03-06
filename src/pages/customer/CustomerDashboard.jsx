@@ -34,7 +34,7 @@ export const CustomerDashboard = () => {
   const [selectedRating, setSelectedRating] = useState(0);
   const [statusFilter, setStatusFilter] = useState("all");
   const [profilePicturePreview, setProfilePicturePreview] = useState(
-    user?.profilePicture || null,
+    user?.profileImage?.url || null,
   );
   const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
 
@@ -179,51 +179,54 @@ export const CustomerDashboard = () => {
       updateUser({ ...user, ...data });
     } catch (error) {
       console.error("Error updating profile:", error);
-
-      const handleProfilePictureChange = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        // Validate file type
-        if (!file.type.startsWith("image/")) {
-          toast.error("Please select an image file");
-          return;
-        }
-
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error("Image size must be less than 5MB");
-          return;
-        }
-
-        // Show preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setProfilePicturePreview(reader.result);
-        };
-        reader.readAsDataURL(file);
-
-        // Upload to server
-        setUploadingProfilePicture(true);
-        try {
-          const response = await authAPI.uploadProfileImage(file, user?._id);
-          toast.success("Profile picture uploaded successfully!");
-          updateUser({
-            ...user,
-            profilePicture: response.data.url || response.data.data?.url,
-          });
-        } catch (error) {
-          console.error("Error uploading profile picture:", error);
-          toast.error(
-            error.response?.data?.message || "Failed to upload profile picture",
-          );
-          // Revert preview on error
-          setProfilePicturePreview(user?.profilePicture || null);
-        } finally {
-          setUploadingProfilePicture(false);
-        }
-      };
       toast.error(error.response?.data?.message || "Failed to update profile");
+    }
+  };
+
+  const handleProfilePictureChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePicturePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    setUploadingProfilePicture(true);
+    try {
+      const response = await authAPI.uploadProfileImage(file, user?._id);
+      toast.success("Profile picture uploaded successfully!");
+      updateUser({
+        ...user,
+        profileImage: {
+          url: response.data.url,
+          uploadedAt: new Date().toISOString(),
+        },
+      });
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to upload profile picture",
+      );
+      // Revert preview on error
+      setProfilePicturePreview(user?.profileImage?.url || null);
+    } finally {
+      setUploadingProfilePicture(false);
     }
   };
 

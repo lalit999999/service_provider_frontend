@@ -139,19 +139,25 @@ export const AdminDashboard = () => {
       const imageUrl = response.data?.url || response.data?.data?.url;
 
       if (imageUrl) {
-        window.updateUser({ ...user, profilePicture: imageUrl });
+        window.updateUser({
+          ...user,
+          profileImage: {
+            url: imageUrl,
+            uploadedAt: new Date().toISOString(),
+          },
+        });
         setProfilePicturePreview(imageUrl);
         toast.success("Profile picture updated successfully!");
       } else {
         toast.error("Failed to get image URL from server");
-        setProfilePicturePreview(user?.profilePicture || null);
+        setProfilePicturePreview(user?.profileImage?.url || null);
       }
     } catch (error) {
       console.error("Error uploading profile picture:", error);
       toast.error(
         error.response?.data?.message || "Failed to upload profile picture",
       );
-      setProfilePicturePreview(user?.profilePicture || null);
+      setProfilePicturePreview(user?.profileImage?.url || null);
     } finally {
       setUploadingProfilePicture(false);
     }
@@ -735,86 +741,6 @@ export const AdminDashboard = () => {
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Category Modal */}
-      {showCategoryModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <div className="flex justify-between items-center mb-5">
-              <h3 className="text-xl font-bold text-gray-900">
-                {editingCategory ? "Edit Category" : "Create Category"}
-              </h3>
-              <button
-                onClick={() => {
-                  setShowCategoryModal(false);
-                  setEditingCategory(null);
-                  reset();
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <form
-              onSubmit={handleSubmit(onSubmitCategory)}
-              className="space-y-5"
-            >
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category Name
-                </label>
-                <input
-                  {...register("name")}
-                  type="text"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g., Plumbing"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description (Optional)
-                </label>
-                <textarea
-                  {...register("description")}
-                  rows="3"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Category description..."
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {editingCategory ? "Update Category" : "Create Category"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCategoryModal(false);
-                    setEditingCategory(null);
-                    reset();
-                  }}
-                  className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
             {/* Profile Tab */}
             {activeTab === "profile" && (
@@ -847,7 +773,10 @@ export const AdminDashboard = () => {
 
                       {/* Upload Input */}
                       <div className="flex-1">
-                        <label htmlFor="profile-picture" className="cursor-pointer">
+                        <label
+                          htmlFor="profile-picture"
+                          className="cursor-pointer"
+                        >
                           <div className="border-2 border-dashed border-blue-300 rounded-lg p-4 hover:bg-blue-100 transition-colors">
                             <div className="flex items-center justify-center gap-2">
                               <Camera className="w-5 h-5 text-blue-600" />
@@ -924,4 +853,84 @@ export const AdminDashboard = () => {
             )}
           </div>
         </div>
-      )}
+
+        {/* Category Modal */}
+        {showCategoryModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+              <div className="flex justify-between items-center mb-5">
+                <h3 className="text-xl font-bold text-gray-900">
+                  {editingCategory ? "Edit Category" : "Create Category"}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowCategoryModal(false);
+                    setEditingCategory(null);
+                    reset();
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <form
+                onSubmit={handleSubmit(onSubmitCategory)}
+                className="space-y-5"
+              >
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category Name
+                  </label>
+                  <input
+                    {...register("name")}
+                    type="text"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="e.g., Plumbing"
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description (Optional)
+                  </label>
+                  <textarea
+                    {...register("description")}
+                    rows="3"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Category description..."
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    {editingCategory ? "Update Category" : "Create Category"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCategoryModal(false);
+                      setEditingCategory(null);
+                      reset();
+                    }}
+                    className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

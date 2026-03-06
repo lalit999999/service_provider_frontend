@@ -44,7 +44,7 @@ export const ProviderDashboard = () => {
   const [isAvailable, setIsAvailable] = useState(user?.isAvailable ?? true);
   const [bookingFilter, setBookingFilter] = useState("all");
   const [profilePicturePreview, setProfilePicturePreview] = useState(
-    user?.profilePicture || null,
+    user?.profileImage?.url || null,
   );
   const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
 
@@ -273,7 +273,10 @@ export const ProviderDashboard = () => {
       toast.success("Profile picture uploaded successfully!");
       updateUser({
         ...user,
-        profilePicture: response.data.url || response.data.data?.url,
+        profileImage: {
+          url: response.data.url,
+          uploadedAt: new Date().toISOString(),
+        },
       });
     } catch (error) {
       console.error("Error uploading profile picture:", error);
@@ -281,7 +284,7 @@ export const ProviderDashboard = () => {
         error.response?.data?.message || "Failed to upload profile picture",
       );
       // Revert preview on error
-      setProfilePicturePreview(user?.profilePicture || null);
+      setProfilePicturePreview(user?.profileImage?.url || null);
     } finally {
       setUploadingProfilePicture(false);
     }
