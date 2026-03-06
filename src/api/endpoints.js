@@ -1,5 +1,10 @@
 import axiosInstance from './axios';
 
+// Health Check Endpoints
+export const healthAPI = {
+  check: () => axiosInstance.get('/health'),
+};
+
 // Auth Endpoints
 export const authAPI = {
   register: (data) => axiosInstance.post('/auth/register', data),
