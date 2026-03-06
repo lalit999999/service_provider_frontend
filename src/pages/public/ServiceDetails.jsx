@@ -61,7 +61,8 @@ export const ServiceDetails = () => {
       const transformedService = {
         ...service,
         price: service.basePrice || service.price,
-        city: service.provider?.city || service.city || 'Location not specified'
+        city:
+          service.provider?.city || service.city || "Location not specified",
       };
       setService(transformedService);
     } catch (error) {

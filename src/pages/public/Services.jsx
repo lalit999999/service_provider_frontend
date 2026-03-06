@@ -56,14 +56,15 @@ export const Services = () => {
       const data = Array.isArray(response.data)
         ? response.data
         : response.data?.services || [];
-      
+
       // Transform API response to match frontend expectations
-      const transformedData = data.map(service => ({
+      const transformedData = data.map((service) => ({
         ...service,
         price: service.basePrice || service.price,
-        city: service.provider?.city || service.city || 'Location not specified'
+        city:
+          service.provider?.city || service.city || "Location not specified",
       }));
-      
+
       setServices(transformedData);
     } catch (error) {
       console.error("Error fetching services:", error);
