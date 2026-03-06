@@ -149,9 +149,12 @@ export const ServiceDetails = () => {
         }
       }
 
+      // Convert datetime-local format to ISO string for backend
+      const dateTimeValue = new Date(data.scheduledDate).toISOString();
+
       const bookingData = {
-        service: id,
-        scheduledDate: data.scheduledDate,
+        serviceId: id,
+        dateTime: dateTimeValue,
         address: data.address,
         notes: data.notes,
         image: imageUrl,
