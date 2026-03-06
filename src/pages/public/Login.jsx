@@ -27,7 +27,10 @@ export const Login = () => {
     setLoading(true);
     setAuthError("");
     try {
-      const response = await authAPI.login(data);
+      const response = await authAPI.login({
+        email: data.email.toLowerCase(),
+        password: data.password,
+      });
       const { token, user } = response.data;
 
       login(user, token);

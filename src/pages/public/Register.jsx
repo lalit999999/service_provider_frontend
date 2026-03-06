@@ -27,7 +27,10 @@ export const Register = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await authAPI.register(data);
+      await authAPI.register({
+        ...data,
+        email: data.email.toLowerCase(),
+      });
       toast.success("Registration successful! Please login.");
       navigate("/login");
     } catch (error) {

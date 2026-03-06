@@ -19,18 +19,15 @@ export const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const response = await authAPI.forgotPassword(email);
+      const response = await authAPI.forgotPassword(email.trim().toLowerCase());
       toast.success(response.data.message || "Reset code sent to your email!");
-
-      // If in development, show the token
-      if (response.data.resetToken) {
-        toast.success(`Reset code: ${response.data.resetToken}`);
-      }
 
       setSubmitted(true);
       // Redirect to reset password page after a delay
       setTimeout(() => {
-        navigate("/reset-password", { state: { email } });
+        navigate("/reset-password", {
+          state: { email: email.trim().toLowerCase() },
+        });
       }, 2000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to send reset code");
