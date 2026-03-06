@@ -56,7 +56,7 @@ export const ProviderDashboard = () => {
   const fetchCategories = async () => {
     try {
       const response = await categoriesAPI.getAll();
-      setCategories(response.data);
+      setCategories(response.data.categories || []);
     } catch (error) {
       setCategories([
         { _id: "1", name: "Plumbing" },
@@ -73,7 +73,7 @@ export const ProviderDashboard = () => {
     setLoading(true);
     try {
       const response = await servicesAPI.getAll({ provider: user?._id });
-      setServices(response.data);
+      setServices(response.data.services || []);
     } catch (error) {
       setServices([
         {

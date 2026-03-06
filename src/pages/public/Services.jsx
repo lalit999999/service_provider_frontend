@@ -53,7 +53,9 @@ export const Services = () => {
       if (filters.city) params.city = filters.city;
 
       const response = await servicesAPI.getAll(params);
-      const data = Array.isArray(response.data) ? response.data : [];
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data?.services || [];
       setServices(data);
     } catch (error) {
       console.error("Error fetching services:", error);

@@ -39,7 +39,9 @@ export const Categories = () => {
     try {
       const response = await categoriesAPI.getAll();
       // Ensure categories is always an array
-      const data = Array.isArray(response.data) ? response.data : [];
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data?.categories || [];
       setCategories(data);
     } catch (error) {
       console.error("Error fetching categories:", error);
