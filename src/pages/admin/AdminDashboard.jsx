@@ -576,7 +576,9 @@ export const AdminDashboard = () => {
                               </button>
                             )}
                             <button
-                              onClick={() => handleRejectProvider(u._id)}
+                              onClick={() =>
+                                handleRejectProvider(u._id || u.id)
+                              }
                               className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
                             >
                               <XCircle className="w-4 h-4" />
