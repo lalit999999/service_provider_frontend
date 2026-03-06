@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Menu, X, User, LogOut, LayoutDashboard, Wrench } from "lucide-react";
+import { ServerHealthStatus } from "./ServerHealthStatus";
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -67,7 +68,12 @@ export const Navbar = () => {
           </div>
 
           {/* Desktop Auth Links */}
-          <div className="hidden md:flex md:items-center md:space-x-3">
+          <div className="hidden md:flex md:items-center md:space-x-4">
+            {/* Server Health Status */}
+            <div className="border-r border-gray-200 pr-4">
+              <ServerHealthStatus showDetails={false} />
+            </div>
+
             {isAuthenticated ? (
               <>
                 <Link
@@ -165,6 +171,10 @@ export const Navbar = () => {
             >
               Services
             </Link>
+
+            <div className="px-3 py-2.5 border-t border-gray-100 my-2">
+              <ServerHealthStatus showDetails={true} />
+            </div>
 
             <div className="border-t border-gray-100 my-2" />
 
