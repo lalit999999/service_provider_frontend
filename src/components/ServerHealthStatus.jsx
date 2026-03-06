@@ -1,5 +1,5 @@
 import React from "react";
-import { useServerHealth } from "../../hooks/useServerHealth";
+import { useServerHealth } from "../hooks/useServerHealth";
 import { Server, AlertCircle, CheckCircle } from "lucide-react";
 
 /**
