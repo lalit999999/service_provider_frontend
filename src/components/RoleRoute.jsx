@@ -1,6 +1,6 @@
-import React from 'react';
-import { Navigate } from 'react-router';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export const RoleRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -22,12 +22,13 @@ export const RoleRoute = ({ children, allowedRoles }) => {
 
   if (!allowedRoles.includes(user.role)) {
     // Redirect to appropriate dashboard based on role
-    const redirectPath = {
-      customer: '/dashboard/customer',
-      provider: '/dashboard/provider',
-      admin: '/dashboard/admin',
-    }[user.role] || '/';
-    
+    const redirectPath =
+      {
+        customer: "/dashboard/customer",
+        provider: "/dashboard/provider",
+        admin: "/dashboard/admin",
+      }[user.role] || "/";
+
     return <Navigate to={redirectPath} replace />;
   }
 

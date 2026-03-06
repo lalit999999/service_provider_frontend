@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -13,7 +13,8 @@ export const Footer = () => {
               LocalServices
             </Link>
             <p className="mt-3 text-sm text-gray-400">
-              Connecting you with trusted local service providers for all your home and business needs.
+              Connecting you with trusted local service providers for all your
+              home and business needs.
             </p>
           </div>
 
@@ -22,22 +23,34 @@ export const Footer = () => {
             <h3 className="text-white font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-sm hover:text-white transition-colors">
+                <Link
+                  to="/"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/categories" className="text-sm hover:text-white transition-colors">
+                <Link
+                  to="/categories"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Categories
                 </Link>
               </li>
               <li>
-                <Link to="/services" className="text-sm hover:text-white transition-colors">
+                <Link
+                  to="/services"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Browse Services
                 </Link>
               </li>
               <li>
-                <Link to="/register" className="text-sm hover:text-white transition-colors">
+                <Link
+                  to="/register"
+                  className="text-sm hover:text-white transition-colors"
+                >
                   Become a Provider
                 </Link>
               </li>
@@ -85,7 +98,8 @@ export const Footer = () => {
 
         <div className="border-t border-gray-800 mt-10 pt-8 text-center">
           <p className="text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} LocalServices. All rights reserved.
+            &copy; {new Date().getFullYear()} LocalServices. All rights
+            reserved.
           </p>
         </div>
       </div>

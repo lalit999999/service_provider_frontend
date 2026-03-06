@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router';
-import { Star, MapPin, DollarSign, User } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Star, MapPin, DollarSign, User } from "lucide-react";
 
 export const ServiceCard = ({ service }) => {
   const averageRating = service.averageRating || 0;
@@ -13,7 +13,7 @@ export const ServiceCard = ({ service }) => {
     >
       {/* Color accent stripe */}
       <div className="h-2 bg-gradient-to-r from-blue-500 to-blue-600" />
-      
+
       <div className="p-5">
         <div className="flex items-start justify-between mb-3">
           <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1 flex-1 mr-2">
@@ -32,7 +32,7 @@ export const ServiceCard = ({ service }) => {
         <div className="flex items-center gap-3 mb-4 text-sm">
           <div className="flex items-center gap-1 text-gray-600">
             <MapPin className="w-4 h-4 text-gray-400" />
-            <span>{service.city || 'Location not specified'}</span>
+            <span>{service.city || "Location not specified"}</span>
           </div>
           <div className="flex items-center gap-1">
             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />

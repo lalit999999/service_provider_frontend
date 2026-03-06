@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams } from "react-router-dom";
 import { servicesAPI, categoriesAPI } from "../../api/endpoints";
 import { ServiceCard } from "../../components/ServiceCard";
 import { Loader2, Filter, X, SlidersHorizontal } from "lucide-react";

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router';
-import { useAuth } from '../context/AuthContext';
-import { Menu, X, User, LogOut, LayoutDashboard, Wrench } from 'lucide-react';
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Menu, X, User, LogOut, LayoutDashboard, Wrench } from "lucide-react";
 
 export const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -11,29 +11,31 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
     setMobileMenuOpen(false);
   };
 
   const getDashboardLink = () => {
-    if (!user) return '/';
-    return {
-      customer: '/dashboard/customer',
-      provider: '/dashboard/provider',
-      admin: '/dashboard/admin',
-    }[user.role] || '/';
+    if (!user) return "/";
+    return (
+      {
+        customer: "/dashboard/customer",
+        provider: "/dashboard/provider",
+        admin: "/dashboard/admin",
+      }[user.role] || "/"
+    );
   };
 
   const isActive = (path) => {
-    if (path === '/') return location.pathname === '/';
+    if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
 
   const navLinkClass = (path) =>
     `inline-flex items-center px-1 pt-1 border-b-2 text-sm transition-colors ${
       isActive(path)
-        ? 'border-blue-600 text-blue-600'
-        : 'border-transparent text-gray-700 hover:text-blue-600 hover:border-gray-300'
+        ? "border-blue-600 text-blue-600"
+        : "border-transparent text-gray-700 hover:text-blue-600 hover:border-gray-300"
     }`;
 
   return (
@@ -52,13 +54,13 @@ export const Navbar = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:ml-8 md:flex md:space-x-6">
-              <Link to="/" className={navLinkClass('/')}>
+              <Link to="/" className={navLinkClass("/")}>
                 Home
               </Link>
-              <Link to="/categories" className={navLinkClass('/categories')}>
+              <Link to="/categories" className={navLinkClass("/categories")}>
                 Categories
               </Link>
-              <Link to="/services" className={navLinkClass('/services')}>
+              <Link to="/services" className={navLinkClass("/services")}>
                 Services
               </Link>
             </div>
@@ -116,7 +118,11 @@ export const Navbar = () => {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -130,7 +136,9 @@ export const Navbar = () => {
               to="/"
               onClick={() => setMobileMenuOpen(false)}
               className={`block px-3 py-2.5 rounded-lg text-sm ${
-                isActive('/') ? 'bg-blue-50 text-blue-600' : 'text-gray-900 hover:bg-gray-50'
+                isActive("/")
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-900 hover:bg-gray-50"
               }`}
             >
               Home
@@ -139,7 +147,9 @@ export const Navbar = () => {
               to="/categories"
               onClick={() => setMobileMenuOpen(false)}
               className={`block px-3 py-2.5 rounded-lg text-sm ${
-                isActive('/categories') ? 'bg-blue-50 text-blue-600' : 'text-gray-900 hover:bg-gray-50'
+                isActive("/categories")
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-900 hover:bg-gray-50"
               }`}
             >
               Categories
@@ -148,7 +158,9 @@ export const Navbar = () => {
               to="/services"
               onClick={() => setMobileMenuOpen(false)}
               className={`block px-3 py-2.5 rounded-lg text-sm ${
-                isActive('/services') ? 'bg-blue-50 text-blue-600' : 'text-gray-900 hover:bg-gray-50'
+                isActive("/services")
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-900 hover:bg-gray-50"
               }`}
             >
               Services

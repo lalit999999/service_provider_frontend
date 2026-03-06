@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { categoriesAPI } from "../../api/endpoints";
 import { toast } from "sonner";
 import { ArrowRight, Loader2 } from "lucide-react";

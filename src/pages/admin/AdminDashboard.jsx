@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { adminAPI, categoriesAPI, reviewsAPI } from "../../api/endpoints";
 import { useAuth } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
