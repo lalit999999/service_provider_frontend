@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Lock, ArrowLeft, CheckCircle } from "lucide-react";
 
 export const ResetPassword = () => {
+  const [email, setEmail] = useState("");
   const [resetToken, setResetToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -12,16 +13,19 @@ export const ResetPassword = () => {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email || "";
+
+  // Initialize email from state if available
+  React.useEffect(() => {
+    if (location.state?.email) {
+      setEmail(location.state.email);
+    }
+  }, [location.state?.email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email) {
-      toast.error(
-        "Email is required. Please start from the forgot password page.",
-      );
-      navigate("/forgot-password");
+      toast.error("Please enter your email address");
       return;
     }
 
@@ -120,6 +124,27 @@ export const ResetPassword = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="your@email.com"
+                  required
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  The email address you used to request the reset code
+                </p>
+              </div>
+
               <div>
                 <label
                   htmlFor="resetToken"
