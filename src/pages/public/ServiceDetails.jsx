@@ -166,8 +166,10 @@ export const ServiceDetails = () => {
       toast.success("Booking request submitted successfully!");
       navigate("/dashboard/customer");
     } catch (error) {
+      console.error("Booking error:", error.response?.data || error.message);
       toast.error(
-        error.response?.data?.message || "Booking submitted successfully!",
+        error.response?.data?.message ||
+          "Failed to create booking. Please try again.",
       );
       navigate("/dashboard/customer");
     } finally {
