@@ -154,7 +154,7 @@ export const AdminDashboard = () => {
     console.log("error 2");
     try {
       console.log("Approving user:", userId);
-      await adminAPI.approveProvider(userId).catch(() => {});
+      await adminAPI.approveProvider(userId);
       console.log("error 3");
       toast.success("Provider approved successfully!");
       setUsers((prev) =>
@@ -165,8 +165,13 @@ export const AdminDashboard = () => {
       );
       console.log("error 4");
     } catch (error) {
-      console.error("Error approving provider:", error);
-      toast.error("Failed to approve provider");
+      console.error(
+        "Error approving provider:",
+        error.response?.data || error.message,
+      );
+      toast.error(
+        error.response?.data?.message || "Failed to approve provider",
+      );
     }
   };
 
@@ -179,9 +184,7 @@ export const AdminDashboard = () => {
     if (!confirm("Are you sure you want to reject this provider?")) return;
     try {
       console.log("Rejecting user:", userId);
-      await adminAPI.rejectProvider(userId).catch((err) => {
-        console.log(err);
-      });
+      await adminAPI.rejectProvider(userId);
       toast.success("Provider rejected");
       setUsers((prev) => {
         return prev.filter((u) => {
@@ -190,8 +193,11 @@ export const AdminDashboard = () => {
         });
       });
     } catch (error) {
-      console.error("Error rejecting provider:", error);
-      toast.error("Failed to reject provider");
+      console.error(
+        "Error rejecting provider:",
+        error.response?.data || error.message,
+      );
+      toast.error(error.response?.data?.message || "Failed to reject provider");
     }
   };
 
