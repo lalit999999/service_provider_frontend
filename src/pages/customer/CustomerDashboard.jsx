@@ -63,6 +63,13 @@ export const CustomerDashboard = () => {
     fetchBookings();
   }, []);
 
+  // Sync profile picture from user data
+  useEffect(() => {
+    if (user?.profileImage?.url) {
+      setProfilePicturePreview(user.profileImage.url);
+    }
+  }, [user?.profileImage?.url]);
+
   const fetchBookings = async () => {
     setLoading(true);
     try {

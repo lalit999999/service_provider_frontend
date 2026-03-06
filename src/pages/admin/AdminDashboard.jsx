@@ -69,7 +69,7 @@ export const AdminDashboard = () => {
   const [userPage, setUserPage] = useState(1);
   const USERS_PER_PAGE = 10;
   const [profilePicturePreview, setProfilePicturePreview] = useState(
-    user?.profilePicture || null,
+    user?.profileImage?.url || null,
   );
   const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
 
@@ -106,6 +106,12 @@ export const AdminDashboard = () => {
   } = useForm({
     resolver: zodResolver(categorySchema),
   });
+
+  useEffect(() => {
+    if (user?.profileImage?.url) {
+      setProfilePicturePreview(user.profileImage.url);
+    }
+  }, [user?.profileImage?.url]);
 
   useEffect(() => {
     fetchStats();

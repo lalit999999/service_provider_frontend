@@ -73,6 +73,12 @@ export const ProviderDashboard = () => {
     }
   }, [user?.isAvailable]);
 
+  // Sync profile picture from user data
+  useEffect(() => {
+    if (user?.profileImage?.url) {
+      setProfilePicturePreview(user.profileImage.url);
+    }
+  }, [user?.profileImage?.url]);
   const fetchCategories = async () => {
     try {
       const response = await categoriesAPI.getAll();
