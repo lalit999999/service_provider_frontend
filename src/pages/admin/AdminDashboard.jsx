@@ -360,10 +360,10 @@ export const AdminDashboard = () => {
                           <Users className="w-6 h-6 opacity-80" />
                         </div>
                         <p className="text-3xl font-bold">
-                          {stats?.totalUsers?.toLocaleString()}
+                          {stats?.users?.total?.toLocaleString()}
                         </p>
                         <p className="text-xs mt-1 text-blue-200">
-                          +{stats?.newUsersThisMonth} this month
+                          +{stats?.users?.total || "0"} total users
                         </p>
                       </div>
 
@@ -375,10 +375,15 @@ export const AdminDashboard = () => {
                           <Calendar className="w-6 h-6 opacity-80" />
                         </div>
                         <p className="text-3xl font-bold">
-                          {stats?.totalBookings?.toLocaleString()}
+                          {stats?.bookings?.total?.toLocaleString()}
                         </p>
                         <p className="text-xs mt-1 text-green-200">
-                          {stats?.completionRate}% completion rate
+                          {Math.round(
+                            ((stats?.bookings?.completed || 0) /
+                              (stats?.bookings?.total || 1)) *
+                              100,
+                          )}
+                          % completion rate
                         </p>
                       </div>
 
@@ -390,7 +395,7 @@ export const AdminDashboard = () => {
                           <DollarSign className="w-6 h-6 opacity-80" />
                         </div>
                         <p className="text-3xl font-bold">
-                          ${stats?.revenue?.toLocaleString()}
+                          ${stats?.revenue?.total?.toLocaleString() || "0"}
                         </p>
                         <p className="text-xs mt-1 text-purple-200">
                           <TrendingUp className="w-3 h-3 inline" /> +12% from
@@ -406,7 +411,7 @@ export const AdminDashboard = () => {
                           <UserCheck className="w-6 h-6 opacity-80" />
                         </div>
                         <p className="text-3xl font-bold">
-                          {stats?.activeProviders}
+                          {stats?.users?.providers?.toLocaleString()}
                         </p>
                         <p className="text-xs mt-1 text-orange-200">
                           {pendingProviders.length} pending approval

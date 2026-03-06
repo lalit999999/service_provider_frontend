@@ -8,51 +8,10 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
 import { LogIn, Mail, Lock, User } from "lucide-react";
 
-const demoAccounts = [
-  {
-    role: "customer",
-    name: "Demo Customer",
-    email: "customer@demo.com",
-    password: "demo123",
-  },
-  {
-    role: "provider",
-    name: "Demo Provider",
-    email: "provider@demo.com",
-    password: "demo123",
-  },
-  {
-    role: "admin",
-    name: "Demo Admin",
-    email: "admin@demo.com",
-    password: "demo123",
-  },
-];
-
 export const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  const handleDemoLogin = (account) => {
-    const mockUser = {
-      _id: `demo_${account.role}`,
-      name: account.name,
-      email: account.email,
-      role: account.role,
-    };
-    login(mockUser, "demo_token_" + account.role);
-    toast.success(`Logged in as ${account.name}!`);
-
-    const redirectPath =
-      {
-        customer: "/dashboard/customer",
-        provider: "/dashboard/provider",
-        admin: "/dashboard/admin",
-      }[account.role] || "/";
-
-    navigate(redirectPath);
-  };
 
   const {
     register,
@@ -179,33 +138,6 @@ export const Login = () => {
           </form>
 
           {/* Demo Accounts */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-3 bg-white text-gray-500">
-                  Quick Demo Login
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {demoAccounts.map((account) => (
-                <button
-                  key={account.role}
-                  onClick={() => handleDemoLogin(account)}
-                  className="flex flex-col items-center p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors"
-                >
-                  <User className="w-5 h-5 text-gray-500 mb-1" />
-                  <span className="text-xs font-medium text-gray-700 capitalize">
-                    {account.role}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>
