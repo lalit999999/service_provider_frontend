@@ -177,7 +177,6 @@ export const AdminDashboard = () => {
     setLoading(true);
     try {
       const response = await adminAPI.getStats();
-      console.log("Stats API response:", response.data);
       const stats = response.data.stats || response.data;
       setStats(stats);
       setAuthError(false);
@@ -195,17 +194,11 @@ export const AdminDashboard = () => {
   const fetchUsers = async () => {
     try {
       const response = await adminAPI.getUsers();
-      console.log("Users API response:", response.data);
       const data = Array.isArray(response.data.users)
         ? response.data.users
         : Array.isArray(response.data)
           ? response.data
           : [];
-      console.log("Extracted users data:", data);
-      if (data.length > 0) {
-        console.log("First user object:", data[0]);
-        console.log("User object keys:", Object.keys(data[0]));
-      }
       setUsers(data);
       if (data.length === 0) {
         console.error("No users fetched from API:", response.data);
@@ -233,18 +226,12 @@ export const AdminDashboard = () => {
   };
 
   const handleApproveProvider = async (userId) => {
-    console.log("error 1");
-
     if (!userId) {
-      console.error("User ID is undefined:", userId);
       toast.error("Unable to approve: User ID not found");
       return;
     }
-    console.log("error 2");
     try {
-      console.log("Approving user:", userId);
       await adminAPI.approveProvider(userId);
-      console.log("error 3");
       toast.success("Provider approved successfully!");
       setUsers((prev) =>
         prev.map((u) => {
@@ -252,7 +239,6 @@ export const AdminDashboard = () => {
           return userIdToMatch === userId ? { ...u, isApproved: true } : u;
         }),
       );
-      console.log("error 4");
     } catch (error) {
       console.error(
         "Error approving provider:",
@@ -266,13 +252,11 @@ export const AdminDashboard = () => {
 
   const handleRejectProvider = async (userId) => {
     if (!userId) {
-      console.error("User ID is undefined:", userId);
       toast.error("Unable to reject: User ID not found");
       return;
     }
     if (!confirm("Are you sure you want to reject this provider?")) return;
     try {
-      console.log("Rejecting user:", userId);
       await adminAPI.rejectProvider(userId);
       toast.success("Provider status changed to pending");
       setUsers((prev) => {
@@ -681,11 +665,6 @@ export const AdminDashboard = () => {
                                 {!u.isApproved && (
                                   <button
                                     onClick={() => {
-                                      console.log("User being approved:", u);
-                                      console.log(
-                                        "User ID field value:",
-                                        u._id || u.id,
-                                      );
                                       handleApproveProvider(u._id || u.id);
                                     }}
                                     className="flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"

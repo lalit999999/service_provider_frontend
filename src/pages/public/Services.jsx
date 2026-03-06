@@ -68,41 +68,7 @@ export const Services = () => {
       setServices(transformedData);
     } catch (error) {
       console.error("Error fetching services:", error);
-      // Optional mock data fallback
-      let mockServices = [
-        {
-          _id: "1",
-          title: "Professional Plumbing Services",
-          description:
-            "Expert plumbing repairs and installations. Licensed and insured with 10+ years of experience.",
-          price: 50,
-          city: "New York",
-          averageRating: 4.5,
-          reviewCount: 24,
-          provider: { name: "John Plumber", _id: "p1" },
-          category: { _id: "1", name: "Plumbing" },
-        },
-        // ...other mock services...
-      ];
-      if (filters.city) {
-        mockServices = mockServices.filter((s) =>
-          s.city.toLowerCase().includes(filters.city.toLowerCase()),
-        );
-      }
-      if (filters.category) {
-        mockServices = mockServices.filter(
-          (s) => s.category?._id === filters.category,
-        );
-      }
-      // Apply sorting
-      if (filters.sortBy === "price-low") {
-        mockServices.sort((a, b) => a.price - b.price);
-      } else if (filters.sortBy === "price-high") {
-        mockServices.sort((a, b) => b.price - a.price);
-      } else if (filters.sortBy === "rating") {
-        mockServices.sort((a, b) => b.averageRating - a.averageRating);
-      }
-      setServices(mockServices);
+      setServices([]);
     } finally {
       setLoading(false);
     }

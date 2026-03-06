@@ -78,26 +78,7 @@ export const Home = () => {
       setCategories(data);
     } catch (error) {
       console.error("Error fetching categories:", error);
-      setCategories([
-        {
-          _id: "1",
-          name: "Plumbing",
-          description: "Professional plumbing services",
-        },
-        { _id: "2", name: "Electrical", description: "Licensed electricians" },
-        { _id: "3", name: "Cleaning", description: "Home and office cleaning" },
-        {
-          _id: "4",
-          name: "Carpentry",
-          description: "Custom woodwork and repairs",
-        },
-        {
-          _id: "5",
-          name: "Painting",
-          description: "Interior and exterior painting",
-        },
-        { _id: "6", name: "HVAC", description: "Heating and cooling services" },
-      ]);
+      setCategories([]);
     } finally {
       setLoading(false);
     }

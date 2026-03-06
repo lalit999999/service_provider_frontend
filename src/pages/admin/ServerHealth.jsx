@@ -36,7 +36,6 @@ export const ServerHealth = () => {
     try {
       const response = await healthAPI.check();
       toast.success("Health check completed!");
-      console.log("Manual health check:", response.data);
     } catch (error) {
       toast.error("Health check failed: " + error.message);
     } finally {

@@ -64,7 +64,7 @@ export const canCancelBooking = (booking) => {
  * Check if booking can be rescheduled
  */
 export const canRescheduleBooking = (booking) => {
-  return ['Requested', 'Confirmed'].includes(booking.status);
+  return ['Requested', 'Accepted'].includes(booking.status);
 };
 
 /**
@@ -80,7 +80,7 @@ export const canReviewBooking = (booking) => {
 export const getStatusColor = (status) => {
   const colors = {
     Requested: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-    Confirmed: 'bg-blue-100 text-blue-800 border-blue-300',
+    Accepted: 'bg-blue-100 text-blue-800 border-blue-300',
     'In-progress': 'bg-purple-100 text-purple-800 border-purple-300',
     Completed: 'bg-green-100 text-green-800 border-green-300',
     Cancelled: 'bg-red-100 text-red-800 border-red-300',

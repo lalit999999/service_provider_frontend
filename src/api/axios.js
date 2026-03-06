@@ -15,8 +15,6 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
 
-    console.log("API Request:", config.method, config.url);
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

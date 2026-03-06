@@ -18,7 +18,6 @@ export const useServerHealth = () => {
 
     const checkHealth = useCallback(async () => {
         try {
-            console.log('[Health Check] Pinging server...');
             const response = await axiosInstance.get('/health');
 
             const healthData = {
@@ -30,7 +29,6 @@ export const useServerHealth = () => {
                 lastChecked: new Date().toISOString(),
             };
 
-            console.log('[Health Check] ✅ Server is healthy:', healthData);
             setHealth(healthData);
         } catch (err) {
             console.error('[Health Check] ❌ Server health check failed:', err.message);

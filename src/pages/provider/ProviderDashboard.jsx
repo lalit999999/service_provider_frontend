@@ -84,14 +84,7 @@ export const ProviderDashboard = () => {
       const response = await categoriesAPI.getAll();
       setCategories(response.data.categories || []);
     } catch (error) {
-      setCategories([
-        { _id: "1", name: "Plumbing" },
-        { _id: "2", name: "Electrical" },
-        { _id: "3", name: "Cleaning" },
-        { _id: "4", name: "Carpentry" },
-        { _id: "5", name: "Painting" },
-        { _id: "6", name: "HVAC" },
-      ]);
+      setCategories([]);
     }
   };
 
@@ -101,41 +94,7 @@ export const ProviderDashboard = () => {
       const response = await servicesAPI.getAll({ provider: user?._id });
       setServices(response.data.services || []);
     } catch (error) {
-      setServices([
-        {
-          _id: "1",
-          title: "Professional Plumbing",
-          description:
-            "Expert plumbing services for residential and commercial properties. Specializing in repairs, installations, and maintenance.",
-          price: 50,
-          city: "New York",
-          category: { _id: "1", name: "Plumbing" },
-          averageRating: 4.5,
-          reviewCount: 24,
-        },
-        {
-          _id: "2",
-          title: "Emergency Pipe Repair",
-          description:
-            "24/7 emergency pipe repair services. Fast response times and guaranteed fixes.",
-          price: 80,
-          city: "Brooklyn",
-          category: { _id: "1", name: "Plumbing" },
-          averageRating: 4.8,
-          reviewCount: 12,
-        },
-        {
-          _id: "3",
-          title: "Bathroom Renovation",
-          description:
-            "Complete bathroom plumbing renovation including fixture installation and pipe rerouting.",
-          price: 120,
-          city: "Manhattan",
-          category: { _id: "1", name: "Plumbing" },
-          averageRating: 4.6,
-          reviewCount: 8,
-        },
-      ]);
+      setServices([]);
     } finally {
       setLoading(false);
     }
@@ -146,49 +105,7 @@ export const ProviderDashboard = () => {
       const response = await bookingsAPI.getAll();
       setBookings(response.data.bookings || []);
     } catch (error) {
-      setBookings([
-        {
-          _id: "b1",
-          service: { title: "Professional Plumbing", _id: "1", price: 50 },
-          customer: { name: "Alice Johnson", _id: "c1" },
-          status: "Requested",
-          scheduledDate: new Date(Date.now() + 86400000 * 2).toISOString(),
-          address: "123 Main St, New York, NY",
-          totalPrice: 50,
-          notes: "Kitchen faucet is leaking badly. Need urgent repair.",
-        },
-        {
-          _id: "b2",
-          service: { title: "Emergency Pipe Repair", _id: "2", price: 80 },
-          customer: { name: "Bob Smith", _id: "c2" },
-          status: "Accepted",
-          scheduledDate: new Date(Date.now() + 86400000).toISOString(),
-          address: "456 Oak Ave, Brooklyn, NY",
-          totalPrice: 80,
-          notes: "Burst pipe in basement.",
-        },
-        {
-          _id: "b3",
-          service: { title: "Professional Plumbing", _id: "1", price: 50 },
-          customer: { name: "Carol Davis", _id: "c3" },
-          status: "Completed",
-          scheduledDate: new Date().toISOString(),
-          address: "789 Pine Rd, Queens, NY",
-          totalPrice: 50,
-          workNotes: "Replaced faulty valve. Testing for leaks.",
-        },
-        {
-          _id: "b4",
-          service: { title: "Bathroom Renovation", _id: "3", price: 120 },
-          customer: { name: "David Wilson", _id: "c4" },
-          status: "Completed",
-          scheduledDate: new Date(Date.now() - 86400000 * 5).toISOString(),
-          address: "321 Elm Blvd, Manhattan, NY",
-          totalPrice: 120,
-          workNotes:
-            "Full bathroom plumbing overhaul completed. All fixtures tested and working.",
-        },
-      ]);
+      setBookings([]);
     }
   };
 
@@ -324,14 +241,14 @@ export const ProviderDashboard = () => {
           );
           break;
 
-        case "completed":
+        case "in-progress":
           await bookingsAPI
-            .updateStatus(bookingId, "Completed")
+            .updateStatus(bookingId, "In-progress")
             .catch(() => {});
-          toast.success("Booking marked as completed!");
+          toast.success("Booking started!");
           setBookings((prev) =>
             prev.map((b) =>
-              b._id === bookingId ? { ...b, status: "Completed" } : b,
+              b._id === bookingId ? { ...b, status: "In-progress" } : b,
             ),
           );
           break;

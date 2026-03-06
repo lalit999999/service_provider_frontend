@@ -167,9 +167,6 @@ export const ServiceDetails = () => {
         notes: data.notes?.trim() || "",
       };
 
-      // Log booking data for debugging
-      console.log("Submitting booking:", bookingData);
-
       await bookingsAPI.create(bookingData);
       toast.success("Booking request submitted successfully!");
       navigate("/dashboard/customer");

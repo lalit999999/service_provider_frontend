@@ -250,7 +250,7 @@ export const CustomerDashboard = () => {
   const bookingStats = {
     total: bookings.length,
     active: bookings.filter((b) =>
-      ["Requested", "Confirmed", "In-progress"].includes(b.status),
+      ["Requested", "Accepted", "In-progress"].includes(b.status),
     ).length,
     completed: bookings.filter((b) => b.status === "Completed").length,
   };
@@ -365,7 +365,7 @@ export const CustomerDashboard = () => {
                   {[
                     "all",
                     "Requested",
-                    "Confirmed",
+                    "Accepted",
                     "In-progress",
                     "Completed",
                     "Cancelled",
