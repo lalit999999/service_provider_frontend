@@ -53,7 +53,7 @@ const CHART_COLORS = [
 ];
 
 export const AdminDashboard = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("stats");
   const [stats, setStats] = useState(null);
@@ -143,7 +143,7 @@ export const AdminDashboard = () => {
       const imageUrl = response.data?.url || response.data?.data?.url;
 
       if (imageUrl) {
-        window.updateUser({
+        updateUser({
           ...user,
           profileImage: {
             url: imageUrl,
