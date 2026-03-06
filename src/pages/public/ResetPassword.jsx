@@ -30,6 +30,11 @@ export const ResetPassword = () => {
       return;
     }
 
+    if (!/^\d{4}$/.test(resetToken.trim())) {
+      toast.error("Reset code must be a 4-digit number");
+      return;
+    }
+
     if (!newPassword || !confirmPassword) {
       toast.error("Please enter and confirm your password");
       return;
@@ -48,8 +53,8 @@ export const ResetPassword = () => {
     setLoading(true);
     try {
       const response = await authAPI.resetPassword(
-        email,
-        resetToken,
+        email.trim(),
+        resetToken.trim(),
         newPassword,
       );
       toast.success(response.data.message || "Password reset successfully!");
