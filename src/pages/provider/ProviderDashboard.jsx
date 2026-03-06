@@ -118,7 +118,7 @@ export const ProviderDashboard = () => {
   const fetchBookings = async () => {
     try {
       const response = await bookingsAPI.getAll();
-      setBookings(response.data);
+      setBookings(response.data.bookings || []);
     } catch (error) {
       setBookings([
         {
