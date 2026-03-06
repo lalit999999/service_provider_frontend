@@ -56,7 +56,14 @@ export const ServiceDetails = () => {
   const fetchServiceDetails = async () => {
     try {
       const response = await servicesAPI.getById(id);
-      setService(response.data);
+      const service = response.data;
+      // Transform API response to match frontend expectations
+      const transformedService = {
+        ...service,
+        price: service.basePrice || service.price,
+        city: service.provider?.city || service.city || 'Location not specified'
+      };
+      setService(transformedService);
     } catch (error) {
       setService({
         _id: id,
