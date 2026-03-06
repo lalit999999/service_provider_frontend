@@ -185,11 +185,11 @@ export const AdminDashboard = () => {
     try {
       console.log("Rejecting user:", userId);
       await adminAPI.rejectProvider(userId);
-      toast.success("Provider rejected");
+      toast.success("Provider status changed to pending");
       setUsers((prev) => {
-        return prev.filter((u) => {
+        return prev.map((u) => {
           const userIdToMatch = u._id || u.id;
-          return userIdToMatch !== userId;
+          return userIdToMatch === userId ? { ...u, isApproved: false } : u;
         });
       });
     } catch (error) {
@@ -557,22 +557,24 @@ export const AdminDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        {u.role === "provider" && !u.isApproved && (
+                        {u.role === "provider" && (
                           <div className="flex gap-2">
-                            <button
-                              onClick={() => {
-                                console.log("User being approved:", u);
-                                console.log(
-                                  "User ID field value:",
-                                  u._id || u.id,
-                                );
-                                handleApproveProvider(u._id || u.id);
-                              }}
-                              className="flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
-                            >
-                              <CheckCircle className="w-4 h-4" />
-                              Approve
-                            </button>
+                            {!u.isApproved && (
+                              <button
+                                onClick={() => {
+                                  console.log("User being approved:", u);
+                                  console.log(
+                                    "User ID field value:",
+                                    u._id || u.id,
+                                  );
+                                  handleApproveProvider(u._id || u.id);
+                                }}
+                                className="flex items-center gap-1.5 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                                Approve
+                              </button>
+                            )}
                             <button
                               onClick={() => handleRejectProvider(u._id)}
                               className="flex items-center gap-1.5 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
