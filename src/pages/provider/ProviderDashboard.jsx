@@ -25,6 +25,8 @@ import {
   TrendingUp,
   MapPin,
   Users,
+  User,
+  Camera,
 } from "lucide-react";
 
 export const ProviderDashboard = () => {
@@ -41,6 +43,10 @@ export const ProviderDashboard = () => {
   const [workNotes, setWorkNotes] = useState("");
   const [isAvailable, setIsAvailable] = useState(user?.isAvailable ?? true);
   const [bookingFilter, setBookingFilter] = useState("all");
+  const [profilePicturePreview, setProfilePicturePreview] = useState(
+    user?.profilePicture || null,
+  );
+  const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
 
   const {
     register,
@@ -235,6 +241,50 @@ export const ProviderDashboard = () => {
     setValue("price", price);
     setValue("city", service.city);
     setShowServiceModal(true);
+  };
+
+  const handleProfilePictureChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB");
+      return;
+    }
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePicturePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    setUploadingProfilePicture(true);
+    try {
+      const response = await authAPI.uploadProfileImage(file, user?._id);
+      toast.success("Profile picture uploaded successfully!");
+      updateUser({
+        ...user,
+        profilePicture: response.data.url || response.data.data?.url,
+      });
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to upload profile picture",
+      );
+      // Revert preview on error
+      setProfilePicturePreview(user?.profilePicture || null);
+    } finally {
+      setUploadingProfilePicture(false);
+    }
   };
 
   const handleBookingAction = async (action, bookingId) => {
@@ -449,6 +499,17 @@ export const ProviderDashboard = () => {
                   </span>
                 )}
               </button>
+              <button
+                onClick={() => setActiveTab("profile")}
+                className={`px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === "profile"
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <User className="inline-block w-4 h-4 mr-2" />
+                Profile
+              </button>
             </nav>
           </div>
 
@@ -582,6 +643,122 @@ export const ProviderDashboard = () => {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Profile Tab */}
+            {activeTab === "profile" && (
+              <div className="max-w-2xl">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Profile Information
+                </h2>
+
+                {/* Profile Picture Section */}
+                <div className="bg-blue-50 rounded-xl p-6 mb-6 border border-blue-200">
+                  <label className="block text-sm font-medium text-gray-700 mb-4">
+                    Profile Picture
+                  </label>
+                  <div className="flex items-center gap-6">
+                    {/* Picture Preview */}
+                    <div className="flex-shrink-0">
+                      <div className="relative w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-2 border-blue-300">
+                        {profilePicturePreview ? (
+                          <img
+                            src={profilePicturePreview}
+                            alt="Profile"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <User className="w-12 h-12 text-gray-400" />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Upload Input */}
+                    <div className="flex-1">
+                      <label
+                        htmlFor="provider-profile-picture"
+                        className="cursor-pointer"
+                      >
+                        <div className="border-2 border-dashed border-blue-300 rounded-lg p-4 hover:bg-blue-100 transition-colors">
+                          <div className="flex items-center justify-center gap-2">
+                            <Camera className="w-5 h-5 text-blue-600" />
+                            <span className="text-sm font-medium text-blue-600">
+                              Choose Photo
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600 mt-1 text-center">
+                            JPG or PNG, up to 5MB
+                          </p>
+                        </div>
+                      </label>
+                      <input
+                        id="provider-profile-picture"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfilePictureChange}
+                        disabled={uploadingProfilePicture}
+                        className="hidden"
+                      />
+                      {uploadingProfilePicture && (
+                        <div className="mt-2 flex items-center gap-2 text-sm text-blue-600">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Uploading...</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Profile Info */}
+                <div className="bg-white border border-gray-200 rounded-xl p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={user?.name || ""}
+                        disabled
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={user?.email || ""}
+                        disabled
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Role
+                      </label>
+                      <input
+                        type="text"
+                        value={user?.role || "provider"}
+                        disabled
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-900 capitalize"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        value={user?.city || ""}
+                        disabled
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-900"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
