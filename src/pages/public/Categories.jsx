@@ -25,7 +25,7 @@ const categoryImages = {
 };
 
 const defaultCategoryImg =
-  "https://images.unsplash.com/photo-1581578949510-fa7315c4c350?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob21lJTIwcmVwYWlyJTIwc2VydmljZXMlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcyNjQ5MzYwfDA&ixlib=rb-4.1.0&q=80&w=1080";
+  "https://img.freepik.com/free-photo/happy-couriers-delivering-order-working-express-service-wearing-red-cap-shirt-deliveryman-carrying-yellow-backpack-holding-tablet-delivery-service-online-shopping-concept_74855-11764.jpg";
 
 export const Categories = () => {
   const [categories, setCategories] = useState([]);
