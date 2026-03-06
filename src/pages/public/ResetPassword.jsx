@@ -52,8 +52,10 @@ export const ResetPassword = () => {
 
     setLoading(true);
     try {
+      // Ensure email is lowercase
+      const normalizedEmail = email.toLowerCase().trim();
       const response = await authAPI.resetPassword(
-        email.trim(),
+        normalizedEmail,
         resetToken.trim(),
         newPassword,
       );
@@ -66,6 +68,10 @@ export const ResetPassword = () => {
       }, 2000);
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to reset password");
+      console.error(
+        "Reset password error:",
+        error.response?.data || error.message,
+      );
     } finally {
       setLoading(false);
     }
