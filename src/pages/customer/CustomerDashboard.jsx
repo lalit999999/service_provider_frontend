@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { bookingsAPI, reviewsAPI } from "../../api/endpoints";
+import { bookingsAPI, reviewsAPI, authAPI } from "../../api/endpoints";
 import { BookingCard } from "../../components/BookingCard";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -175,11 +175,12 @@ export const CustomerDashboard = () => {
 
   const onSubmitProfile = async (data) => {
     try {
+      const response = await authAPI.updateProfile(data);
       toast.success("Profile updated successfully!");
       updateUser({ ...user, ...data });
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
+      toast.error(error.response?.data?.message || "Failed to update profile");
     }
   };
 

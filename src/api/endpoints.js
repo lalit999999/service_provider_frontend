@@ -4,6 +4,17 @@ import axiosInstance from './axios';
 export const authAPI = {
   register: (data) => axiosInstance.post('/auth/register', data),
   login: (data) => axiosInstance.post('/auth/login', data),
+  updateProfile: (data) => axiosInstance.put('/auth/profileupdate', data),
+  uploadProfileImage: (file, userId) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const endpoint = userId ? `/auth/${userId}/profile-image` : '/auth/profile-image';
+    return axiosInstance.post(endpoint, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 };
 
 // Categories Endpoints
@@ -50,6 +61,11 @@ export const adminAPI = {
   approveProvider: (id) => axiosInstance.patch(`/admin/users/${id}/approve`),
   rejectProvider: (id) => axiosInstance.patch(`/admin/users/${id}/reject`),
 };
+
+// Provider approval management
+// router.patch('/users/:providerid/approve', ...adminAuth, approveProvider);
+// router.patch('/users/:providerId/reject', ...adminAuth, rejectProvider);
+
 
 // Image Upload
 export const uploadAPI = {
