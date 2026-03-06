@@ -155,10 +155,12 @@ export const ServiceDetails = () => {
       const bookingData = {
         serviceId: id,
         dateTime: dateTimeValue,
-        address: data.address,
-        notes: data.notes,
-        image: imageUrl,
+        address: data.address?.trim() || "",
+        notes: data.notes?.trim() || "",
       };
+
+      // Log booking data for debugging
+      console.log("Submitting booking:", bookingData);
 
       await bookingsAPI.create(bookingData);
       toast.success("Booking request submitted successfully!");
