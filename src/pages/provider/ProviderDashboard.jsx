@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 
 export const ProviderDashboard = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState("services");
   const [services, setServices] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -39,7 +39,7 @@ export const ProviderDashboard = () => {
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [workNotes, setWorkNotes] = useState("");
-  const [isAvailable, setIsAvailable] = useState(true);
+  const [isAvailable, setIsAvailable] = useState(user?.isAvailable ?? true);
   const [bookingFilter, setBookingFilter] = useState("all");
 
   const {
@@ -57,6 +57,13 @@ export const ProviderDashboard = () => {
     fetchServices();
     fetchBookings();
   }, []);
+
+  // Sync availability status from user data
+  useEffect(() => {
+    if (user?.isAvailable !== undefined) {
+      setIsAvailable(user.isAvailable);
+    }
+  }, [user?.isAvailable]);
 
   const fetchCategories = async () => {
     try {
@@ -340,6 +347,8 @@ export const ProviderDashboard = () => {
                 const newAvailability = !isAvailable;
                 await authAPI.updateAvailability(newAvailability);
                 setIsAvailable(newAvailability);
+                // Update user context to persist across page refresh
+                updateUser({ ...user, isAvailable: newAvailability });
                 toast.success(
                   `Now ${newAvailability ? "Available" : "Offline"}`,
                 );
