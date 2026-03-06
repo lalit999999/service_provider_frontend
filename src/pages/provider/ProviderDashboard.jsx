@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { servicesAPI, bookingsAPI, categoriesAPI } from "../../api/endpoints";
+import {
+  servicesAPI,
+  bookingsAPI,
+  categoriesAPI,
+  authAPI,
+} from "../../api/endpoints";
 import { BookingCard } from "../../components/BookingCard";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -173,7 +178,7 @@ export const ProviderDashboard = () => {
         title: data.title,
         description: data.description,
         categoryId: data.category, // Transform 'category' to 'categoryId'
-        basePrice: data.price,     // Transform 'price' to 'basePrice'
+        basePrice: data.price, // Transform 'price' to 'basePrice'
         ...(data.city && { city: data.city }),
         ...(data.image && { image: data.image }),
       };
@@ -195,9 +200,7 @@ export const ProviderDashboard = () => {
       setEditingService(null);
       reset();
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to save service",
-      );
+      toast.error(error.response?.data?.message || "Failed to save service");
     }
   };
 
@@ -332,7 +335,19 @@ export const ProviderDashboard = () => {
             </p>
           </div>
           <button
-            onClick={() => setIsAvailable(!isAvailable)}
+            onClick={async () => {
+              try {
+                const newAvailability = !isAvailable;
+                await authAPI.updateAvailability(newAvailability);
+                setIsAvailable(newAvailability);
+                toast.success(
+                  `Now ${newAvailability ? "Available" : "Offline"}`,
+                );
+              } catch (error) {
+                toast.error("Failed to update availability");
+                console.error(error);
+              }
+            }}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors ${
               isAvailable
                 ? "bg-green-600 text-white hover:bg-green-700"
