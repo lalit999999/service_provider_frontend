@@ -1,9 +1,9 @@
-import React, { Suspense } from 'react';
-import { RouterProvider } from 'react-router';
-import { AuthProvider } from '../context/AuthContext';
-import { Toaster } from 'sonner';
-import { router } from './routes';
-import { Loader2 } from 'lucide-react';
+import React, { Suspense } from "react";
+import { RouterProvider } from "react-router-dom";
+import { AuthProvider } from "../context/AuthContext";
+import { Toaster } from "sonner";
+import { router } from "./routes";
+import { Loader2 } from "lucide-react";
 
 const LoadingFallback = () => (
   <div className="min-h-screen bg-gray-50 flex items-center justify-center">

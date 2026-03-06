@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { adminAPI, categoriesAPI, reviewsAPI } from "../../api/endpoints";
+import { useAuth } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { categorySchema } from "../../utils/validations";
@@ -44,11 +46,14 @@ const CHART_COLORS = [
 ];
 
 export const AdminDashboard = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("stats");
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [userFilter, setUserFilter] = useState("all");
@@ -86,8 +91,12 @@ export const AdminDashboard = () => {
       console.log("Stats API response:", response.data);
       const stats = response.data.stats || response.data;
       setStats(stats);
+      setAuthError(false);
     } catch (error) {
       console.error("Error fetching stats:", error);
+      if (error.response?.status === 401) {
+        setAuthError(true);
+      }
       setStats(null);
     } finally {
       setLoading(false);
@@ -135,14 +144,18 @@ export const AdminDashboard = () => {
   };
 
   const handleApproveProvider = async (userId) => {
+    console.log("error 1");
+
     if (!userId) {
       console.error("User ID is undefined:", userId);
       toast.error("Unable to approve: User ID not found");
       return;
     }
+    console.log("error 2");
     try {
       console.log("Approving user:", userId);
       await adminAPI.approveProvider(userId).catch(() => {});
+      console.log("error 3");
       toast.success("Provider approved successfully!");
       setUsers((prev) =>
         prev.map((u) => {
@@ -150,6 +163,7 @@ export const AdminDashboard = () => {
           return userIdToMatch === userId ? { ...u, isApproved: true } : u;
         }),
       );
+      console.log("error 4");
     } catch (error) {
       console.error("Error approving provider:", error);
       toast.error("Failed to approve provider");
@@ -165,7 +179,9 @@ export const AdminDashboard = () => {
     if (!confirm("Are you sure you want to reject this provider?")) return;
     try {
       console.log("Rejecting user:", userId);
-      await adminAPI.rejectProvider(userId).catch(() => {});
+      await adminAPI.rejectProvider(userId).catch((err) => {
+        console.log(err);
+      });
       toast.success("Provider rejected");
       setUsers((prev) => {
         return prev.filter((u) => {
@@ -233,6 +249,30 @@ export const AdminDashboard = () => {
       : userFilter === "pending"
         ? pendingProviders
         : users.filter((u) => u.role === userFilter);
+
+  // Show auth error message if 401 received
+  if (authError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8">
+        <div className="max-w-md mx-auto text-center bg-white rounded-xl shadow-md p-8">
+          <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Authentication Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Your session has expired or you don't have admin privileges. Please
+            log in again.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

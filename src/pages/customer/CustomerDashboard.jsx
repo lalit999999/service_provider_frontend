@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { bookingsAPI, reviewsAPI } from "../../api/endpoints";
 import { BookingCard } from "../../components/BookingCard";
@@ -15,11 +16,14 @@ import {
   Clock,
   CheckCircle,
   AlertCircle,
+  Shield,
 } from "lucide-react";
 
 export const CustomerDashboard = () => {
   const { user, updateUser } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("bookings");
+  const [authError, setAuthError] = useState(false);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -58,72 +62,18 @@ export const CustomerDashboard = () => {
     setLoading(true);
     try {
       const response = await bookingsAPI.getAll();
-      const data = Array.isArray(response.data) ? response.data : [];
+      const data = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.bookings)
+          ? response.data.bookings
+          : [];
       setBookings(data);
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      setBookings([
-        {
-          _id: "1",
-          service: {
-            title: "Professional Plumbing Service",
-            _id: "s1",
-            price: 50,
-          },
-          provider: { name: "John Plumber", _id: "p1" },
-          status: "Requested",
-          scheduledDate: new Date(Date.now() + 86400000 * 3).toISOString(),
-          address: "123 Main St, New York, NY 10001",
-          totalPrice: 50,
-          notes: "Leaking faucet in kitchen",
-        },
-        {
-          _id: "2",
-          service: {
-            title: "Licensed Electrical Repair",
-            _id: "s2",
-            price: 75,
-          },
-          provider: { name: "Jane Electric", _id: "p2" },
-          status: "Confirmed",
-          scheduledDate: new Date(Date.now() + 86400000 * 5).toISOString(),
-          address: "456 Oak Ave, Brooklyn, NY 11201",
-          totalPrice: 75,
-          notes: "Light switch replacement",
-        },
-        {
-          _id: "3",
-          service: { title: "Deep Home Cleaning", _id: "s3", price: 35 },
-          provider: { name: "Clean Pro Team", _id: "p3" },
-          status: "In-progress",
-          scheduledDate: new Date().toISOString(),
-          address: "789 Pine Rd, Queens, NY 11101",
-          totalPrice: 35,
-          workNotes: "Currently cleaning kitchen and bathrooms.",
-        },
-        {
-          _id: "4",
-          service: { title: "Interior Painting", _id: "s4", price: 45 },
-          provider: { name: "Color Masters", _id: "p4" },
-          status: "Completed",
-          scheduledDate: new Date(Date.now() - 86400000 * 7).toISOString(),
-          address: "321 Elm Blvd, Manhattan, NY 10013",
-          totalPrice: 45,
-          hasReview: false,
-          workNotes:
-            "Two coats of premium paint applied. Living room and bedroom completed.",
-        },
-        {
-          _id: "5",
-          service: { title: "HVAC Maintenance", _id: "s5", price: 85 },
-          provider: { name: "CoolAir Solutions", _id: "p5" },
-          status: "Completed",
-          scheduledDate: new Date(Date.now() - 86400000 * 14).toISOString(),
-          address: "654 Birch St, New York, NY 10002",
-          totalPrice: 85,
-          hasReview: true,
-        },
-      ]);
+      if (error.response?.status === 401) {
+        setAuthError(true);
+      }
+      setBookings([]);
     } finally {
       setLoading(false);
     }
@@ -250,6 +200,29 @@ export const CustomerDashboard = () => {
     ).length,
     completed: bookings.filter((b) => b.status === "Completed").length,
   };
+
+  if (authError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8">
+        <div className="bg-white rounded-xl shadow-sm p-8 max-w-md text-center">
+          <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Authentication Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Your session has expired or you need to log in to access the
+            customer dashboard.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">

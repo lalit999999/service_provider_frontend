@@ -1,9 +1,9 @@
-import { createBrowserRouter } from 'react-router';
-import React, { lazy, Suspense } from 'react';
-import { RoleRoute } from '../components/RoleRoute';
-import { ProtectedRoute } from '../components/ProtectedRoute';
-import { Layout } from '../components/Layout';
-import { Loader2 } from 'lucide-react';
+import { createBrowserRouter } from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+import { RoleRoute } from "../components/RoleRoute";
+import { ProtectedRoute } from "../components/ProtectedRoute";
+import { Layout } from "../components/Layout";
+import { Loader2 } from "lucide-react";
 
 // Loading spinner for lazy routes
 const LazyFallback = () => (
@@ -16,16 +16,42 @@ const LazyFallback = () => (
 );
 
 // Lazy load pages
-const Home = lazy(() => import('../pages/public/Home').then(m => ({ default: m.Home })));
-const Login = lazy(() => import('../pages/public/Login').then(m => ({ default: m.Login })));
-const Register = lazy(() => import('../pages/public/Register').then(m => ({ default: m.Register })));
-const Categories = lazy(() => import('../pages/public/Categories').then(m => ({ default: m.Categories })));
-const Services = lazy(() => import('../pages/public/Services').then(m => ({ default: m.Services })));
-const ServiceDetails = lazy(() => import('../pages/public/ServiceDetails').then(m => ({ default: m.ServiceDetails })));
+const Home = lazy(() =>
+  import("../pages/public/Home").then((m) => ({ default: m.Home })),
+);
+const Login = lazy(() =>
+  import("../pages/public/Login").then((m) => ({ default: m.Login })),
+);
+const Register = lazy(() =>
+  import("../pages/public/Register").then((m) => ({ default: m.Register })),
+);
+const Categories = lazy(() =>
+  import("../pages/public/Categories").then((m) => ({ default: m.Categories })),
+);
+const Services = lazy(() =>
+  import("../pages/public/Services").then((m) => ({ default: m.Services })),
+);
+const ServiceDetails = lazy(() =>
+  import("../pages/public/ServiceDetails").then((m) => ({
+    default: m.ServiceDetails,
+  })),
+);
 
-const CustomerDashboard = lazy(() => import('../pages/customer/CustomerDashboard').then(m => ({ default: m.CustomerDashboard })));
-const ProviderDashboard = lazy(() => import('../pages/provider/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })));
-const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const CustomerDashboard = lazy(() =>
+  import("../pages/customer/CustomerDashboard").then((m) => ({
+    default: m.CustomerDashboard,
+  })),
+);
+const ProviderDashboard = lazy(() =>
+  import("../pages/provider/ProviderDashboard").then((m) => ({
+    default: m.ProviderDashboard,
+  })),
+);
+const AdminDashboard = lazy(() =>
+  import("../pages/admin/AdminDashboard").then((m) => ({
+    default: m.AdminDashboard,
+  })),
+);
 
 // Helper to wrap lazy components in Suspense
 const SuspenseWrap = ({ children }: { children: React.ReactNode }) => (
@@ -37,7 +63,7 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: (
           <SuspenseWrap>
             <Home />
@@ -45,7 +71,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/login',
+        path: "/login",
         element: (
           <SuspenseWrap>
             <Login />
@@ -53,7 +79,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/register',
+        path: "/register",
         element: (
           <SuspenseWrap>
             <Register />
@@ -61,7 +87,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/categories',
+        path: "/categories",
         element: (
           <SuspenseWrap>
             <Categories />
@@ -69,7 +95,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/services',
+        path: "/services",
         element: (
           <SuspenseWrap>
             <Services />
@@ -77,7 +103,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/services/:id',
+        path: "/services/:id",
         element: (
           <SuspenseWrap>
             <ServiceDetails />
@@ -85,11 +111,11 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/dashboard/customer',
+        path: "/dashboard/customer",
         element: (
           <SuspenseWrap>
             <ProtectedRoute>
-              <RoleRoute allowedRoles={['customer']}>
+              <RoleRoute allowedRoles={["customer"]}>
                 <CustomerDashboard />
               </RoleRoute>
             </ProtectedRoute>
@@ -97,11 +123,11 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/dashboard/provider',
+        path: "/dashboard/provider",
         element: (
           <SuspenseWrap>
             <ProtectedRoute>
-              <RoleRoute allowedRoles={['provider']}>
+              <RoleRoute allowedRoles={["provider"]}>
                 <ProviderDashboard />
               </RoleRoute>
             </ProtectedRoute>
@@ -109,11 +135,11 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/dashboard/admin',
+        path: "/dashboard/admin",
         element: (
           <SuspenseWrap>
             <ProtectedRoute>
-              <RoleRoute allowedRoles={['admin']}>
+              <RoleRoute allowedRoles={["admin"]}>
                 <AdminDashboard />
               </RoleRoute>
             </ProtectedRoute>
@@ -121,7 +147,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '*',
+        path: "*",
         element: (
           <div className="min-h-[70vh] bg-gray-50 flex items-center justify-center">
             <div className="text-center">
