@@ -65,6 +65,9 @@ export const bookingsAPI = {
 export const reviewsAPI = {
   create: (data) => axiosInstance.post('/reviews', data),
   getByProvider: (providerId) => axiosInstance.get(`/reviews/provider/${providerId}`),
+  getByService: (serviceId) => axiosInstance.get(`/reviews/service/${serviceId}`),
+  getByBooking: (bookingId) => axiosInstance.get(`/reviews/booking/${bookingId}`),
+  update: (id, data) => axiosInstance.put(`/reviews/${id}`, data),
   delete: (id) => axiosInstance.delete(`/reviews/${id}`),
 };
 

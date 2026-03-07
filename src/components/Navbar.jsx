@@ -49,7 +49,6 @@ export const Navbar = () => {
                 <img
                   src="https://res.cloudinary.com/dsmyka9cr/image/upload/v1772833875/Screenshot_2026-03-02_22_56_10_jszwmm.png"
                   alt="logo"
-                  srcset=""
                 />
               </div>
               <span className="text-xl font-bold text-gray-900">

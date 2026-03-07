@@ -48,10 +48,10 @@ export const ServiceDetails = () => {
   }, [id]);
 
   useEffect(() => {
-    if (service?.provider?._id) {
+    if (service?._id) {
       fetchReviews();
     }
-  }, [service?.provider?._id]);
+  }, [service?._id]);
 
   const fetchServiceDetails = async () => {
     try {
@@ -88,9 +88,12 @@ export const ServiceDetails = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await reviewsAPI.getByProvider(service.provider._id);
-      setReviews(response.data.reviews || []);
+      const response = await reviewsAPI.getByService(service._id);
+      console.log(response.data.reviews);
+
+      setReviews(response.data.reviews);
     } catch (error) {
+      console.error("Error fetching reviews:", error);
       setReviews([
         {
           _id: "1",

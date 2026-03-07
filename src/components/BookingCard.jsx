@@ -31,6 +31,10 @@ export const BookingCard = ({ booking, userRole, onAction }) => {
     userRole === "customer" &&
     booking.status === "Completed" &&
     !booking.hasReview;
+  const canUpdateReview =
+    userRole === "customer" &&
+    booking.status === "Completed" &&
+    booking.hasReview;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
@@ -127,6 +131,14 @@ export const BookingCard = ({ booking, userRole, onAction }) => {
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
               >
                 Write Review
+              </button>
+            )}
+            {canUpdateReview && (
+              <button
+                onClick={() => onAction?.("updateReview", booking._id)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+              >
+                Update Review
               </button>
             )}
           </>

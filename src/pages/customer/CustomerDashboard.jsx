@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { bookingsAPI, reviewsAPI, authAPI } from "../../api/endpoints";
+import { servicesAPI } from "../../api/endpoints";
+
+// There is no providerAPI in endpoints.js, so we need to fetch provider info another way.
+// If providerId is available, fetch provider details from servicesAPI or bookingsAPI as needed.
 import { BookingCard } from "../../components/BookingCard";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,6 +41,8 @@ export const CustomerDashboard = () => {
     user?.profileImage?.url || null,
   );
   const [uploadingProfilePicture, setUploadingProfilePicture] = useState(false);
+  const [reviewMode, setReviewMode] = useState("create"); // "create" or "update"
+  const [existingReview, setExistingReview] = useState(null);
 
   const {
     register: registerReview,
@@ -113,9 +119,39 @@ export const CustomerDashboard = () => {
           break;
 
         case "review":
+        case "review":
           setSelectedBooking(bookings.find((b) => b._id === bookingId));
           setSelectedRating(0);
+          setExistingReview(null);
+          setReviewMode("create");
           resetReview();
+          setShowReviewModal(true);
+          break;
+
+        case "updateReview":
+          const bookingForUpdate = bookings.find((b) => b._id === bookingId);
+          setSelectedBooking(bookingForUpdate);
+          setReviewMode("update");
+          setExistingReview(null);
+          setSelectedRating(0);
+          resetReview();
+
+          // Fetch existing review
+          try {
+            const response = await reviewsAPI.getByBooking(bookingId);
+            if (response.data.review) {
+              const review = response.data.review;
+              setExistingReview(review);
+              setSelectedRating(review.rating);
+              resetReview({
+                rating: review.rating,
+                comment: review.comment,
+              });
+            }
+          } catch (error) {
+            console.error("Error fetching existing review:", error);
+            toast.error("Failed to load existing review");
+          }
           setShowReviewModal(true);
           break;
 
@@ -127,21 +163,30 @@ export const CustomerDashboard = () => {
       toast.error(error.response?.data?.message || "Action failed");
     }
   };
-
   const onSubmitReview = async (data) => {
     try {
-      await reviewsAPI.create({
-        booking: selectedBooking._id,
-        service: selectedBooking.service._id,
-        provider: selectedBooking.provider._id,
-        rating: Number(data.rating),
-        comment: data.comment,
-      });
+      if (reviewMode === "create") {
+        // Create new review
+        await reviewsAPI.create({
+          bookingId: selectedBooking._id,
+          rating: Number(data.rating),
+          comment: data.comment,
+        });
+        toast.success("Review submitted successfully!");
+      } else if (reviewMode === "update" && existingReview) {
+        // Update existing review
+        await reviewsAPI.update(existingReview._id, {
+          rating: Number(data.rating),
+          comment: data.comment,
+        });
+        toast.success("Review updated successfully!");
+      }
 
-      toast.success("Review submitted successfully!");
       setShowReviewModal(false);
       resetReview();
       setSelectedRating(0);
+      setExistingReview(null);
+      setReviewMode("create");
       setBookings((prev) =>
         prev.map((b) =>
           b._id === selectedBooking._id ? { ...b, hasReview: true } : b,
@@ -255,28 +300,7 @@ export const CustomerDashboard = () => {
     completed: bookings.filter((b) => b.status === "Completed").length,
   };
 
-  if (authError) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8">
-        <div className="bg-white rounded-xl shadow-sm p-8 max-w-md text-center">
-          <Shield className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Authentication Required
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Your session has expired or you need to log in to access the
-            customer dashboard.
-          </p>
-          <button
-            onClick={() => navigate("/login")}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go to Login
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // ...existing code...
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -547,13 +571,15 @@ export const CustomerDashboard = () => {
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-5">
               <h3 className="text-xl font-bold text-gray-900">
-                Write a Review
+                {reviewMode === "create" ? "Write a Review" : "Update Review"}
               </h3>
               <button
                 onClick={() => {
                   setShowReviewModal(false);
                   resetReview();
                   setSelectedRating(0);
+                  setExistingReview(null);
+                  setReviewMode("create");
                 }}
                 className="text-gray-400 hover:text-gray-600"
               >
@@ -624,7 +650,7 @@ export const CustomerDashboard = () => {
                   type="submit"
                   className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Submit Review
+                  {reviewMode === "create" ? "Submit Review" : "Update Review"}
                 </button>
                 <button
                   type="button"
@@ -632,6 +658,8 @@ export const CustomerDashboard = () => {
                     setShowReviewModal(false);
                     resetReview();
                     setSelectedRating(0);
+                    setExistingReview(null);
+                    setReviewMode("create");
                   }}
                   className="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-colors"
                 >
@@ -709,3 +737,5 @@ export const CustomerDashboard = () => {
     </div>
   );
 };
+
+export default CustomerDashboard;
