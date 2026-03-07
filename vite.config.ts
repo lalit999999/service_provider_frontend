@@ -16,15 +16,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:3000/api",
-        changeOrigin: true,
-        rewrite: (path) => path,
-      },
-    },
-  },
+  // server: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "http://localhost:3000/api",
+  //       changeOrigin: true,
+  //       rewrite: (path) => path,
+  //     },
+  //   },
+  // },
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ["**/*.svg", "**/*.csv"],
