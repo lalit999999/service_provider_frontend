@@ -9,6 +9,7 @@ export const healthAPI = {
 export const authAPI = {
   register: (data) => axiosInstance.post('/auth/register', data),
   login: (data) => axiosInstance.post('/auth/login', data),
+  validateEmail: (email) => axiosInstance.post('/auth/validate-email', { email }),
   updateProfile: (data) => axiosInstance.put('/auth/profileupdate', data),
   updateAvailability: (isAvailable) => axiosInstance.patch('/auth/availability', { isAvailable }),
   forgotPassword: (email) => axiosInstance.post('/auth/forgot-password', { email }),

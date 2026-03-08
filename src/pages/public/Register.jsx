@@ -5,8 +5,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../../utils/validations";
 import { authAPI } from "../../api/endpoints";
 import { useAuth } from "../../context/AuthContext";
+import { useEmailValidation } from "../../hooks/useEmailValidation";
 import { toast } from "sonner";
-import { UserPlus, Mail, Lock, User, Wrench, ShoppingBag } from "lucide-react";
+import {
+  UserPlus,
+  Mail,
+  Lock,
+  User,
+  Wrench,
+  ShoppingBag,
+  CheckCircle,
+  XCircle,
+  Loader2,
+} from "lucide-react";
 
 export const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -16,6 +27,8 @@ export const Register = () => {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
     formState: { errors },
     watch,
   } = useForm({
@@ -23,21 +36,59 @@ export const Register = () => {
   });
 
   const selectedRole = watch("role");
+  const emailValue = watch("email");
+
+  // Real-time email validation using custom hook
+  const { isValidating, isValid, isInvalid, message } = useEmailValidation(
+    emailValue?.trim().toLowerCase(),
+  );
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      await authAPI.register({
+      const response = await authAPI.register({
         ...data,
         email: data.email.toLowerCase(),
       });
-      toast.success("Registration successful! Please login.");
-      navigate("/login");
+
+      clearErrors("email");
+
+      // Check if backend returns token and user (auto-login)
+      if (response.data?.token && response.data?.user) {
+        const { token, user } = response.data;
+        login(user, token);
+        toast.success("Registration successful! Welcome!");
+
+        // Navigate to appropriate dashboard based on role
+        const redirectPath =
+          {
+            customer: "/dashboard/customer",
+            provider: "/dashboard/provider",
+            admin: "/dashboard/admin",
+          }[user.role] || "/";
+
+        navigate(redirectPath);
+      } else {
+        // If no auto-login, redirect to login page
+        toast.success("Registration successful! Please login.");
+        navigate("/login");
+      }
     } catch (error) {
-      toast.error(
+      const backendMessage =
         error.response?.data?.message ||
-          "Registration failed. Please try again.",
-      );
+        "Registration failed. Please try again.";
+
+      if (
+        backendMessage.toLowerCase().includes("address not found") ||
+        backendMessage.toLowerCase().includes("email")
+      ) {
+        setError("email", {
+          type: "server",
+          message: backendMessage,
+        });
+      }
+
+      toast.error(backendMessage);
     } finally {
       setLoading(false);
     }
@@ -150,14 +201,40 @@ export const Register = () => {
                   {...register("email")}
                   type="email"
                   id="email"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={`block w-full pl-10 pr-10 py-2.5 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                    errors.email || isInvalid
+                      ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                      : isValid
+                        ? "border-green-300 focus:ring-green-500 focus:border-green-500"
+                        : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  }`}
                   placeholder="you@example.com"
                 />
+                {/* Validation Status Icon */}
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  {isValidating && (
+                    <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+                  )}
+                  {!isValidating && isValid && (
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                  )}
+                  {!isValidating && isInvalid && (
+                    <XCircle className="h-5 w-5 text-red-500" />
+                  )}
+                </div>
               </div>
+              {/* Error Messages */}
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">
                   {errors.email.message}
                 </p>
+              )}
+              {/* Real-time validation feedback */}
+              {!errors.email && isInvalid && message && (
+                <p className="mt-1 text-sm text-red-600">{message}</p>
+              )}
+              {!errors.email && isValid && message && (
+                <p className="mt-1 text-sm text-green-600">{message}</p>
               )}
             </div>
 
@@ -270,7 +347,7 @@ export const Register = () => {
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || isValidating || isInvalid}
                 className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? "Creating account..." : "Create Account"}
